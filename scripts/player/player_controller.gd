@@ -7,9 +7,27 @@ class_name OwoTaPlayer
 @export var look_sensitivity: float = 0.004
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-var look_delta := Vector2.ZERO
 
 @onready var camera_pivot: Node3D = $CameraPivot
+
+func _ready() -> void:
+	add_to_group("player")
+	_register_actions()
+
+func _register_actions() -> void:
+	var bindings := {
+		"move_left": KEY_A,
+		"move_right": KEY_D,
+		"move_forward": KEY_W,
+		"move_back": KEY_S,
+		"jump": KEY_SPACE
+	}
+	for action in bindings:
+		if not InputMap.has_action(action):
+			InputMap.add_action(action)
+		var event := InputEventKey.new()
+		event.physical_keycode = bindings[action]
+		InputMap.action_add_event(action, event)
 
 func _physics_process(delta: float) -> void:
 	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
