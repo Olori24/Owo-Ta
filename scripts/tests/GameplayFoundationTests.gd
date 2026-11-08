@@ -2,8 +2,6 @@ extends SceneTree
 
 const TEST_VIEW_SIZE := Vector2(1080.0, 1920.0)
 
-var _failed := false
-
 func _initialize() -> void:
 	call_deferred("_run_tests")
 
@@ -33,17 +31,17 @@ func _run_tests() -> void:
 	if not _test_touch_controls(player, controls):
 		quit(1)
 		return
-	var physics_passed := await _test_player_physics(player, controls)
-	if not physics_passed:
+	if not await _test_player_physics(player, controls):
 		quit(1)
 		return
 
-	print("OWO TÀ gameplay behavior tests passed: touch release/look routing, camera-relative movement, rotation, gravity, and jumping.")
+	print("OWO TÀ gameplay behavior tests passed: mobile touch routing/release, focus/pause/removal cleanup, camera-relative movement, rotation, gravity, jumping, and building collision.")
 	world.queue_free()
 	quit(0)
 
 func _test_touch_controls(player: CharacterBody3D, controls: Control) -> bool:
 	_release_test_actions()
+	player.call("cancel_jump")
 
 	_send_touch(controls, 1, Vector2(150.0, 500.0), true)
 	_send_drag(controls, 1, Vector2(230.0, 500.0))
@@ -60,7 +58,9 @@ func _test_touch_controls(player: CharacterBody3D, controls: Control) -> bool:
 	if not _expect(Input.is_action_pressed("jump"), "touching the visible jump button should press jump"):
 		return false
 	_send_touch(controls, 2, jump_center, false)
-	if not _expect(not Input.is_action_pressed("jump"), "releasing the jump button must release jump"):
+	if not _expect(not Input.is_action_pressed("jump"), "releasing the jump button must release the jump action"):
+		return false
+	if not _expect(bool(player.get("jump_requested")), "a short jump tap must remain buffered after touch release until the next physics tick"):
 		return false
 	player.call("cancel_jump")
 
@@ -88,11 +88,39 @@ func _test_touch_controls(player: CharacterBody3D, controls: Control) -> bool:
 	if not _expect(Input.is_action_pressed("move_right") and Input.is_action_pressed("jump"), "simultaneous joystick and jump touches should be active"):
 		return false
 	controls.notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
-	if not _expect(not Input.is_action_pressed("move_left") and not Input.is_action_pressed("move_right") and not Input.is_action_pressed("move_forward") and not Input.is_action_pressed("move_back") and not Input.is_action_pressed("jump"), "application focus loss must release every virtual action"):
+	if not _expect(_all_virtual_actions_released(), "application focus loss must release every virtual action"):
 		return false
-	if not _expect(int(controls.get("active_move_touch")) == -1 and int(controls.get("active_look_touch")) == -1 and int(controls.get("jump_touch")) == -1, "application focus loss must clear all touch ids"):
+	if not _expect(_all_touch_ids_cleared(controls), "application focus loss must clear all touch ids"):
 		return false
 	if not _expect(not bool(player.get("jump_requested")), "application focus loss must cancel an unconsumed jump request"):
+		return false
+
+	_send_touch(controls, 6, Vector2(150.0, 500.0), true)
+	_send_drag(controls, 6, Vector2(230.0, 500.0))
+	_send_touch(controls, 7, jump_center, true)
+	_send_touch(controls, 7, jump_center, false)
+	if not _expect(bool(player.get("jump_requested")), "jump tap should be pending before app-pause cleanup"):
+		return false
+	controls.notification(Node.NOTIFICATION_APPLICATION_PAUSED)
+	if not _expect(_all_virtual_actions_released() and not bool(player.get("jump_requested")), "application pause must release controls and cancel a pending jump"):
+		return false
+	if not _expect(_all_touch_ids_cleared(controls), "application pause must clear all touch ids"):
+		return false
+
+	_send_touch(controls, 8, Vector2(150.0, 500.0), true)
+	_send_drag(controls, 8, Vector2(230.0, 500.0))
+	_send_touch(controls, 9, jump_center, true)
+	_send_touch(controls, 9, jump_center, false)
+	var controls_layer := controls.get_parent() as CanvasLayer
+	if not _expect(controls_layer != null and bool(player.get("jump_requested")), "touch overlay removal test requires a pending jump and parent layer"):
+		return false
+	controls_layer.remove_child(controls)
+	if not _expect(_all_virtual_actions_released() and not bool(player.get("jump_requested")), "removing the touch overlay must release controls and cancel a pending jump"):
+		return false
+	if not _expect(_all_touch_ids_cleared(controls), "removing the touch overlay must clear all touch ids"):
+		return false
+	controls_layer.add_child(controls)
+	if not _expect(controls.is_inside_tree(), "touch overlay must be restored after removal testing"):
 		return false
 	_release_test_actions()
 	return true
@@ -114,14 +142,14 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		return false
 	var jump_start_height := player.global_position.y
 	var jump_center := TEST_VIEW_SIZE - Vector2(82.0, 92.0)
-	_send_touch(controls, 6, jump_center, true)
-	_send_touch(controls, 6, jump_center, false)
+	_send_touch(controls, 10, jump_center, true)
+	_send_touch(controls, 10, jump_center, false)
 	await physics_frame
 	var jumped := player.velocity.y > 0.1 and player.global_position.y > jump_start_height
 	if not _expect(jumped, "grounded jump input should produce upward velocity and displacement"):
 		return false
 
-	player.global_position = Vector3.ZERO + Vector3(0.0, 0.1, 3.0)
+	player.global_position = Vector3(0.0, 0.1, 3.0)
 	player.velocity = Vector3.ZERO
 	player.rotation.y = 0.0
 	var camera_pivot := player.get_node_or_null("CameraPivot") as Node3D
@@ -153,6 +181,28 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		return false
 	if not _expect(not Input.is_action_pressed("move_forward"), "movement test must release its input action"):
 		return false
+
+	player.global_position = Vector3(-20.0, 0.1, -13.0)
+	player.velocity = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	camera_pivot.rotation = Vector3.ZERO
+	visual_body.rotation = Vector3.ZERO
+	for _frame in range(18):
+		await physics_frame
+	if not _expect(player.is_on_floor(), "player should be grounded before building collision testing"):
+		return false
+	var building_test_start_x := player.global_position.x
+	Input.action_press("move_right")
+	for _frame in range(60):
+		await physics_frame
+	Input.action_release("move_right")
+	var building_displacement_x := player.global_position.x - building_test_start_x
+	if not _expect(building_displacement_x > 1.0, "player should move toward BuildingA during the collision test"):
+		return false
+	if not _expect(player.global_position.x < -16.6, "player must stop at BuildingA rather than pass through its collision box"):
+		return false
+	if not _expect(not Input.is_action_pressed("move_right"), "building collision test must release its movement action"):
+		return false
 	return true
 
 func _send_touch(controls: Control, finger: int, position: Vector2, pressed: bool) -> void:
@@ -168,6 +218,15 @@ func _send_drag(controls: Control, finger: int, position: Vector2) -> void:
 	event.position = position
 	controls.call("_input", event)
 
+func _all_virtual_actions_released() -> bool:
+	for action in ["move_left", "move_right", "move_forward", "move_back", "jump"]:
+		if InputMap.has_action(action) and Input.is_action_pressed(action):
+			return false
+	return true
+
+func _all_touch_ids_cleared(controls: Control) -> bool:
+	return int(controls.get("active_move_touch")) == -1 and int(controls.get("active_look_touch")) == -1 and int(controls.get("jump_touch")) == -1
+
 func _release_test_actions() -> void:
 	for action in ["move_left", "move_right", "move_forward", "move_back", "jump"]:
 		if InputMap.has_action(action):
@@ -180,5 +239,5 @@ func _expect(condition: bool, message: String) -> bool:
 	return false
 
 func _fail(message: String) -> void:
-	_failed = true
 	push_error("OWO TÀ gameplay test failed: " + message)
+	quit(1)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
@@ -20,6 +20,9 @@ size = Vector3(90, 0.5, 90)
 size = Vector3(12, 0.08, 90)
 
 [sub_resource type="BoxMesh" id="BuildingMesh"]
+size = Vector3(7, 9, 7)
+
+[sub_resource type="BoxShape3D" id="BuildingCollisionShape"]
 size = Vector3(7, 9, 7)
 
 [sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
@@ -54,15 +57,33 @@ position = Vector3(-13, 4.5, -13)
 mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
+[node name="BuildingACollision" type="StaticBody3D" parent="."]
+position = Vector3(-13, 4.5, -13)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingACollision"]
+shape = SubResource("BuildingCollisionShape")
+
 [node name="BuildingB" type="MeshInstance3D" parent="."]
 position = Vector3(14, 4.5, -21)
 mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
+[node name="BuildingBCollision" type="StaticBody3D" parent="."]
+position = Vector3(14, 4.5, -21)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingBCollision"]
+shape = SubResource("BuildingCollisionShape")
+
 [node name="BuildingC" type="MeshInstance3D" parent="."]
 position = Vector3(-17, 4.5, 12)
 mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
+
+[node name="BuildingCCollision" type="StaticBody3D" parent="."]
+position = Vector3(-17, 4.5, 12)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingCCollision"]
+shape = SubResource("BuildingCollisionShape")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector3(0, 0.1, 3)

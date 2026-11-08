@@ -15,12 +15,13 @@ OWO TÀ is a mobile-first, 3D action-adventure prototype intended to evolve into
 
 1. Keep the Godot project root as the source of truth for runtime, renderer, input, and export configuration.
 2. Target mobile rendering and portrait viewport defaults from the foundation stage.
-3. Treat `application/run/main_scene` as the configured startup contract. `scripts/ProjectValidation.gd` instantiates that scene and fails if the world, player, collision, camera, environment, lighting, or touch overlay is missing.
+3. `scripts/ProjectValidation.gd` loads and instantiates the scene configured by `application/run/main_scene`, then validates that same instance. The configured startup scene itself must contain the player, collision, current camera, world environment, lighting, mobile controls, ground, and matching blockout building colliders; a separate fallback district cannot make validation pass.
 4. Keep locomotion and collision on a `CharacterBody3D` root. Movement uses the camera's horizontal basis; only the visible body mesh rotates toward movement so facing cannot feed back into camera heading.
-5. Route joystick, camera-look, and jump touches through the mobile overlay. Jump taps are buffered until a physics tick; touch actions and pending jumps are cleared on release, app pause/focus loss, or control removal.
-6. Run a headless behavior suite against the configured main scene. It covers touch routing/release, camera-relative movement, visible-body turning, camera-heading stability, gravity, and jumping.
-7. Pin CI to Godot 4.3 stable and a fixed Ubuntu LTS runner. Keep Android SDK platform/build-tools versions explicit; verify the APK is nonempty and passes archive-integrity validation before upload.
-8. Do not add proprietary generation dependencies, unlicensed assets, secrets, or external paid-service requirements to the project.
+5. Route joystick, camera-look, and jump touches through the mobile overlay. A jump request survives ordinary finger release until the next physics tick consumes it. Focus loss, application pause, or removal of the touch overlay clears held virtual actions and cancels any pending jump request.
+6. Run a headless behavior suite against the configured main scene. It covers touch hit testing and release, focus/pause/removal cleanup, camera-relative movement, visible-body turning, camera-heading stability, gravity, jumping, and collision with a district building.
+7. Use aligned `StaticBody3D` box colliders for the current box-mesh building blockout. Structural validation checks the collider type, size, and alignment, and the behavior suite verifies the player cannot pass through a building.
+8. Pin CI to Godot 4.3 stable and a fixed Ubuntu LTS runner. Keep Android SDK platform/build-tools versions explicit; verify the APK is nonempty and passes archive-integrity validation before upload.
+9. Do not add proprietary generation dependencies, unlicensed assets, secrets, or external paid-service requirements to the project.
 
 ## Repository structure
 
@@ -36,7 +37,7 @@ OWO TÀ is a mobile-first, 3D action-adventure prototype intended to evolve into
 
 ## Current milestone status
 
-The Phase 002 foundation includes a greybox first-district scene; a `CharacterBody3D` player with collision, camera-relative locomotion, gravity, and buffered jump; a third-person camera and visible-body rotation; multi-touch joystick/look/jump controls with release cleanup; structural validation of the configured main scene; automated behavior tests; Android APK/AAB export presets; and pinned Godot 4.3 CI. The debug APK pipeline now exports and verifies a real APK artifact before upload. No Android device test is implied by headless validation.
+The Phase 002 foundation includes a greybox first-district scene; a `CharacterBody3D` player with collision, camera-relative locomotion, gravity, and buffered jump; a third-person camera and visible-body rotation; multi-touch joystick/look/jump controls with release cleanup; same-instance validation of the configured main scene; box collisions on the three blockout buildings; automated behavior tests; Android APK/AAB export presets; and pinned Godot 4.3 CI. The debug APK pipeline exports and verifies a real APK artifact before upload. No Android device test is implied by headless validation.
 
 ## Required next milestone
 
