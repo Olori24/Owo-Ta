@@ -191,13 +191,23 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		await physics_frame
 	if not _expect(player.is_on_floor(), "player should be grounded before building collision testing"):
 		return false
+	var building_collision := player.get_parent().get_node_or_null("BuildingACollision") as StaticBody3D
+	if not _expect(building_collision != null, "BuildingA must have its expected StaticBody3D collision body"):
+		return false
 	var building_test_start_x := player.global_position.x
+	var hit_building_a := false
 	Input.action_press("move_right")
 	for _frame in range(60):
 		await physics_frame
+		for collision_index in range(player.get_slide_collision_count()):
+			var slide_collision := player.get_slide_collision(collision_index)
+			if slide_collision.get_collider() == building_collision:
+				hit_building_a = true
 	Input.action_release("move_right")
 	var building_displacement_x := player.global_position.x - building_test_start_x
 	if not _expect(building_displacement_x > 1.0, "player should move toward BuildingA during the collision test"):
+		return false
+	if not _expect(hit_building_a, "player must physically register a slide collision with BuildingACollision"):
 		return false
 	if not _expect(player.global_position.x < -16.6, "player must stop at BuildingA rather than pass through its collision box"):
 		return false
