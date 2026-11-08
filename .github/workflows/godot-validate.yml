@@ -5,14 +5,17 @@ on:
     branches:
       - main
       - develop
+      - feature/phase-*
   pull_request:
     branches:
       - main
       - develop
+      - feature/phase-*
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Check out repository
@@ -21,11 +24,13 @@ jobs:
       - name: Download pinned Godot build
         run: |
           mkdir -p .tools
-          curl -L -o .tools/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          curl --fail --location --retry 3 -o .tools/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
           unzip -q .tools/godot.zip -d .tools
           chmod +x .tools/Godot_v4.3-stable_linux.x86_64
           mv .tools/Godot_v4.3-stable_linux.x86_64 .tools/godot
 
-      - name: Validate Godot project
-        run: |
-          ./.tools/godot --headless --path . --script res://scripts/ProjectValidation.gd
+      - name: Import project resources
+        run: ./.tools/godot --headless --editor --path . --quit
+
+      - name: Validate 3D gameplay foundation
+        run: ./.tools/godot --headless --path . --script res://scripts/ProjectValidation.gd
