@@ -8,24 +8,25 @@
 
 ## Branching model
 
-- `main`: protected release branch.
-- `develop`: integration branch for active work.
-- Feature branches: `feature/<short-name>`
-- Fix branches: `fix/<short-name>`
-- Hotfix branches: `hotfix/<short-name>`
+- main: protected release branch.
+- develop: integration branch for active work.
+- Feature branches: feature/<short-name>
+- Fix branches: fix/<short-name>
+- Hotfix branches: hotfix/<short-name>
 
 ## Contribution rules
 
-1. All work must be merged into `develop` or a feature branch via pull request.
-2. No direct pushes to `main` when pull requests are available.
-3. Every pull request must include a brief technical rationale and validation evidence.
-4. Larger design changes must include docs updates.
-5. Asset usage must be reviewed against the licensing register before submission.
-6. Secrets, credentials, and platform-generated files must never be committed.
+1. All work must be merged into develop via pull request.
+2. Release changes move from develop to main via pull request.
+3. No direct pushes to main when pull requests are available.
+4. Every pull request must include a brief technical rationale and validation evidence.
+5. Larger design changes must include docs updates.
+6. Asset usage must be reviewed against the licensing register before submission.
+7. Secrets, credentials, and platform-generated files must never be committed.
 
 ## Validation gate
 
-Before merge, a pull request should show:
+The automated Godot validation workflow currently checks pull requests targeting main or develop. Before merge, a pull request should show:
 
 - project validation passing in CI,
 - no unresolved licensing issues,
