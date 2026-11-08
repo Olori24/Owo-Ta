@@ -65,6 +65,10 @@ jobs:
           test -s build/android/owo_ta-debug.apk
           unzip -t build/android/owo_ta-debug.apk
 
+      - name: Verify APK signature
+        run: |
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs build/android/owo_ta-debug.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
