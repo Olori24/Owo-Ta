@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
+
+[sub_resource type="Environment" id="Environment_world"]
+background_mode = 1
+background_color = Color(0.35, 0.55, 0.68, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.78, 0.82, 1)
+ambient_light_energy = 0.7
+
+[sub_resource type="BoxMesh" id="GroundMesh"]
+size = Vector3(90, 0.5, 90)
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(90, 0.5, 90)
+
+[node name="FirstDistrict" type="Node3D"]
+groups = ["game_world"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_world")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-52, -28, 0)
+shadow_enabled = true
+light_energy = 1.1
+
+[node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.25, 0)
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("GroundMesh")
+
+[node name="GroundCollision" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="Road" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, -8)
+mesh = BoxMesh.new()
