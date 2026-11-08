@@ -9,6 +9,7 @@ class_name OwoTaPlayer
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @onready var camera_pivot: Node3D = $CameraPivot
+@onready var visual_body: Node3D = $Body
 
 func _ready() -> void:
 	add_to_group("player")
@@ -27,7 +28,8 @@ func _register_actions() -> void:
 			InputMap.add_action(action)
 		var event := InputEventKey.new()
 		event.physical_keycode = bindings[action]
-		InputMap.action_add_event(action, event)
+		if not InputMap.action_has_event(action, event):
+			InputMap.action_add_event(action, event)
 
 func _physics_process(delta: float) -> void:
 	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
@@ -50,8 +52,14 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Rotate only the visible mesh. Rotating CharacterBody3D would also rotate
+	# CameraPivot and feed the character's facing back into camera-relative movement.
 	if direction.length() > 0.1:
-		rotation.y = lerp_angle(rotation.y, atan2(-direction.x, -direction.z), 10.0 * delta)
+		visual_body.rotation.y = lerp_angle(
+			visual_body.rotation.y,
+			atan2(-direction.x, -direction.z),
+			10.0 * delta
+		)
 
 func apply_look(delta_pixels: Vector2) -> void:
 	camera_pivot.rotate_y(-delta_pixels.x * look_sensitivity)
