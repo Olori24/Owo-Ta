@@ -1,0 +1,18 @@
+# Godot generated folders
+.import/
+.export_templates/
+.godot/
+
+# Local build output
+build/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/*.iml
+
+# Editor and OS noise
+.vscode/
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

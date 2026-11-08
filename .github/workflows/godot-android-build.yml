@@ -1,0 +1,60 @@
+name: Godot Android export
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  android-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Download pinned Godot and export templates
+        run: |
+          mkdir -p .tools/export_templates "$HOME/.local/share/godot/export_templates/4.3.stable"
+          curl --fail --location --retry 3 -o .tools/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q .tools/godot.zip -d .tools
+          chmod +x .tools/Godot_v4.3-stable_linux.x86_64
+          mv .tools/Godot_v4.3-stable_linux.x86_64 .tools/godot
+          curl --fail --location --retry 3 -o .tools/export_templates.tpz https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
+          unzip -q .tools/export_templates.tpz -d .tools/export_templates
+          cp -a .tools/export_templates/templates/. "$HOME/.local/share/godot/export_templates/4.3.stable/"
+      - name: Install Android SDK command line tools
+        run: |
+          mkdir -p "$RUNNER_TEMP/android-sdk/cmdline-tools" "$RUNNER_TEMP/cmdline-tools-unpack"
+          curl --fail --location --retry 3 -o "$RUNNER_TEMP/cmdline-tools.zip" https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q "$RUNNER_TEMP/cmdline-tools.zip" -d "$RUNNER_TEMP/cmdline-tools-unpack"
+          mv "$RUNNER_TEMP/cmdline-tools-unpack/cmdline-tools" "$RUNNER_TEMP/android-sdk/cmdline-tools/latest"
+          echo "ANDROID_HOME=$RUNNER_TEMP/android-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$RUNNER_TEMP/android-sdk" >> "$GITHUB_ENV"
+      - name: Install Android SDK packages and accept licenses
+        run: |
+          SDKMANAGER="$RUNNER_TEMP/android-sdk/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          "$SDKMANAGER" --install "cmdline-tools;latest" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+      - name: Install matching Godot Android Gradle build template
+        run: ./.tools/godot --headless --path . --install-android-build-template
+      - name: Export Android APK
+        env:
+          ANDROID_HOME: ${{ runner.temp }}/android-sdk
+          ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+        run: |
+          mkdir -p build/android
+          ./.tools/godot --headless --path . --export-debug "Android Debug APK" build/android/owo_ta-debug.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: owo-ta-android-debug
+          path: build/android/owo_ta-debug.apk
