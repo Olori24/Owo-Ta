@@ -41,10 +41,10 @@ A fresh checkout needs all of the following before Android export:
 
 1. Install the Godot 4.3 stable editor.
 2. In Godot's Editor > Manage Export Templates, install the matching 4.3 stable export templates.
-3. Install the matching Android Gradle build template into this project. The CI workflow performs this with the Godot --install-android-build-template command.
+3. The Android Debug APK preset uses the standard template. For the Android Release AAB preset, install the matching Android Gradle build template into this project with the Godot --install-android-build-template command.
 4. Install JDK 17 and Android SDK command-line tools, platform-tools, Android 34 platform, and build-tools 34.0.0.
 5. Set JAVA_HOME and ANDROID_HOME (or ANDROID_SDK_ROOT) in the shell. In Godot Editor, configure the Java SDK and Android SDK paths under Editor Settings > Export > Android.
-6. Run scripts/build_android.sh. It checks prerequisites and invokes Godot; it does not install Java, the Android SDK, or the editor export templates.
+6. Run scripts/build_android.sh to create the debug APK. The script checks prerequisites and installs the project Gradle build template for future AAB export; it does not install Java, the Android SDK, or the editor export templates. The Android Release AAB preset is configured separately and still requires the matching Gradle template.
 
 The GitHub Actions workflow provisions these tools and uploads a debug APK artifact when manually dispatched or when changes are pushed to main. A successful project validation is not evidence that an APK has been exported; only a completed export workflow with an uploaded artifact proves that.
 
