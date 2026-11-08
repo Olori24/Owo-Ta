@@ -189,7 +189,7 @@ Each workstream opens a pull request that includes:
 - What changed and what did not change.
 - The issue it addresses.
 - The exact commit SHA.
-- CI and test results for that exact SHA.
+- CI and test evidence identifying the pull-request head SHA and base SHA. For `pull_request` workflows that use GitHub's default checkout, also record the tested synthetic merge commit SHA; do not describe that result as a head-only test unless the workflow explicitly checks out the head commit.
 - Screenshots, recordings, APK artifacts, or device observations when relevant.
 - Known limitations, deferred work, and asset/license information.
 
