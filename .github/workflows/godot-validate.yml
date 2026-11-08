@@ -1,0 +1,42 @@
+name: Godot project validation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/phase-*
+  pull_request:
+    branches:
+      - main
+      - develop
+      - feature/phase-*
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download pinned Godot build
+        run: |
+          mkdir -p .tools
+          curl --fail --location --retry 3 -o .tools/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q .tools/godot.zip -d .tools
+          chmod +x .tools/Godot_v4.3-stable_linux.x86_64
+          mv .tools/Godot_v4.3-stable_linux.x86_64 .tools/godot
+
+      - name: Import project resources
+        run: ./.tools/godot --headless --editor --path . --quit
+
+      - name: Validate configured main scene and gameplay components
+        run: ./.tools/godot --headless --path . --script res://scripts/ProjectValidation.gd
+
+      - name: Run gameplay behavior tests
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/GameplayFoundationTests.gd
