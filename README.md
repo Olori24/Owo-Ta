@@ -1,8 +1,25 @@
 # OWO TÀ
 
-OWO TÀ is an Android-first, third-person 3D Lagos street-culture adventure and racing game. This private repository is the permanent source of truth for the game's code, original assets, design decisions, build pipeline, and release history.
+<p align="center">
+  <img src="assets/readme/hero-lagos-night.svg" alt="OWO TÀ — Lagos no dey wait" width="100%" />
+</p>
 
-The project is being built as a genuinely playable 3D game, not as a collection of static mockups or concept images. The first goal is a stable, polished vertical slice that can run on mid-range Android devices.
+<p align="center">
+  <img src="https://img.shields.io/badge/SETTING-LAGOS%2C%20NIGERIA-18B9A8?style=for-the-badge" alt="Setting: Lagos, Nigeria" />
+  <img src="https://img.shields.io/badge/GENRE-3D%20ADVENTURE%20%2B%20RACING-FFC928?style=for-the-badge&labelColor=142638" alt="3D adventure and racing" />
+  <img src="https://img.shields.io/badge/PLATFORM-ANDROID-18B9A8?style=for-the-badge" alt="Android" />
+  <img src="https://img.shields.io/badge/ENGINE-GODOT%204.3-478CBF?style=for-the-badge" alt="Godot 4.3" />
+  <img src="https://img.shields.io/badge/STATUS-IN%20DEVELOPMENT-F06A52?style=for-the-badge" alt="In development" />
+</p>
+
+<p align="center">
+  <strong>LAGOS NO DEY WAIT.</strong><br/>
+  Find your lane. Build your name. Own your street.
+</p>
+
+OWO TÀ is an Android-first, third-person 3D adventure and racing game inspired by the energy, movement, humour, and street culture of Lagos, Nigeria. This is a growing street kingdom: from danfo-filled junctions and market roads to the bright skyline and fast lanes of the island.
+
+**This repository is the source of truth for the game.** The visuals below are original README illustrations that establish the intended art direction. They are not screenshots or claims that these features are already playable. The current playable build remains an early greybox prototype, as described in [Development status](#current-development-status).
 
 ## Product direction
 
@@ -19,6 +36,73 @@ Planned gameplay includes:
 - Nigerian Pidgin dialogue, Lagos humour, and original music.
 
 These are product goals, not claims that every feature is already implemented. Work is delivered in verified phases.
+
+## The Lagos look
+
+OWO TÀ should feel unmistakably Lagos: bold street signage, warm sodium lights, wet asphalt reflections, danfo yellow, market colour, concrete textures, expressive characters, and a city that never feels asleep.
+
+<p align="center">
+  <img src="assets/readme/districts-lagos.svg" alt="Illustrated Lagos district skyline" width="100%" />
+</p>
+
+### The visual language
+
+| Identity element | Direction |
+| --- | --- |
+| **Night asphalt** | `#101820` · deep charcoal foundations and road surfaces |
+| **Lagos yellow** | `#FFC928` · danfo energy, route markers, highlights |
+| **Street teal** | `#18B9A8` · transport details and interface accents |
+| **Signal coral** | `#F06A52` · mission alerts, rival markers, emphasis |
+| **Warm cream** | `#FFF0D2` · readable type and sign lettering |
+| **City blue** | `#142638` · night sky, panels, and skyline depth |
+
+The intended finish is **stylized premium 3D**: expressive, detailed, colourful, and readable on mid-range Android phones. The README art is a brand direction, not a substitute for the real 3D models, environments, lighting, and gameplay assets that will be built in Godot and Blender.
+
+### Streets, rides, and the crew
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/readme/danfo-run.svg" alt="Lagos danfo bus concept illustration" width="100%" />
+      <strong>DANFO RUSH</strong><br/>Own the yellow lane.
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/readme/keke-corner.svg" alt="Keke Napep concept illustration" width="100%" />
+      <strong>KEKE CORNER</strong><br/>Small ride. Big city energy.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/readme/okada-sprint.svg" alt="Okada motorcycle concept illustration" width="100%" />
+      <strong>OKADA SPRINT</strong><br/>Cut through the rush.
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/readme/street-crew.svg" alt="Three stylized street crew character concepts" width="100%" />
+      <strong>YOUR STREET CREW</strong><br/>Different faces. Different stories.
+    </td>
+  </tr>
+</table>
+
+### Your route. Your reputation. Your OWO.
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/readme/mission-map.svg" alt="Illustrated Lagos mission route map" width="100%" />
+      <strong>MISSION ROUTES</strong><br/>Take on checkpoints, rival crews, and district challenges.
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/readme/owo-token.svg" alt="OWO in-game currency token illustration" width="68%" />
+      <strong>OWO CURRENCY</strong><br/>Earn, upgrade, customize, and progress.
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="assets/readme/lagos-street-signs.svg" alt="Agege, Mushin, and Oshodi street sign identity" width="100%" />
+</p>
+
+<sub>All nine SVGs in this section are original vector illustrations created for the OWO TÀ README. They are brand and world-building concepts, not representations of completed in-game content.</sub>
 
 ## Ownership and project constraints
 
