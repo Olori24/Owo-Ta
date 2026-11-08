@@ -22,12 +22,15 @@ func _ensure_input_actions() -> void:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 
-func _process(_delta: float) -> void:
-	queue_redraw()
+func _exit_tree() -> void:
+	_release_all_controls()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
 		_release_all_controls()
+
+func _process(_delta: float) -> void:
+	queue_redraw()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -39,6 +42,9 @@ func _input(event: InputEvent) -> void:
 			elif _is_jump_button_position(event.position) and jump_touch == -1:
 				jump_touch = event.index
 				Input.action_press("jump")
+				var player := get_tree().get_first_node_in_group("player")
+				if player and player.has_method("request_jump"):
+					player.request_jump()
 			elif event.position.x >= size.x * 0.48 and active_look_touch == -1:
 				active_look_touch = event.index
 				last_look_position = event.position
@@ -68,6 +74,20 @@ func _jump_button_center() -> Vector2:
 func _is_jump_button_position(position: Vector2) -> bool:
 	return position.distance_to(_jump_button_center()) <= JUMP_RADIUS
 
+func _release_all_controls() -> void:
+	active_move_touch = -1
+	active_look_touch = -1
+	jump_touch = -1
+	move_origin = Vector2.ZERO
+	move_vector = Vector2.ZERO
+	last_look_position = Vector2.ZERO
+	var player := get_tree().get_first_node_in_group("player")
+	if player and player.has_method("cancel_jump"):
+		player.cancel_jump()
+	for action in ["move_left", "move_right", "move_forward", "move_back", "jump"]:
+		if InputMap.has_action(action):
+			Input.action_release(action)
+
 func _update_move_actions() -> void:
 	_set_action("move_left", move_vector.x < -0.2)
 	_set_action("move_right", move_vector.x > 0.2)
@@ -75,20 +95,12 @@ func _update_move_actions() -> void:
 	_set_action("move_back", move_vector.y > 0.2)
 
 func _set_action(action: String, pressed: bool) -> void:
+	if not InputMap.has_action(action):
+		return
 	if pressed:
 		Input.action_press(action)
 	else:
 		Input.action_release(action)
-
-func _release_all_controls() -> void:
-	for action in ["move_left", "move_right", "move_forward", "move_back", "jump"]:
-		Input.action_release(action)
-	active_move_touch = -1
-	active_look_touch = -1
-	jump_touch = -1
-	move_origin = Vector2.ZERO
-	move_vector = Vector2.ZERO
-	last_look_position = Vector2.ZERO
 
 func _draw() -> void:
 	if active_move_touch != -1:

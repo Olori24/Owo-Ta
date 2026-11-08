@@ -7,6 +7,7 @@ class_name OwoTaPlayer
 @export var look_sensitivity: float = 0.004
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var jump_requested := false
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var visual_body: Node3D = $Body
@@ -31,8 +32,7 @@ func _register_actions() -> void:
 		if not InputMap.action_has_event(action, event):
 			InputMap.action_add_event(action, event)
 
-func _physics_process(delta: float) -> void:
-	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+func _camera_relative_direction(input_vector: Vector2) -> Vector3:
 	var camera_basis := camera_pivot.global_transform.basis
 	var camera_forward := -camera_basis.z
 	var camera_right := camera_basis.x
@@ -40,14 +40,26 @@ func _physics_process(delta: float) -> void:
 	camera_right.y = 0.0
 	camera_forward = camera_forward.normalized()
 	camera_right = camera_right.normalized()
-	var direction := (camera_right * input_vector.x - camera_forward * input_vector.y).normalized()
+	return (camera_right * input_vector.x - camera_forward * input_vector.y).normalized()
+
+func request_jump() -> void:
+	jump_requested = true
+
+func cancel_jump() -> void:
+	jump_requested = false
+
+func _physics_process(delta: float) -> void:
+	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var direction := _camera_relative_direction(input_vector)
 
 	velocity.x = move_toward(velocity.x, direction.x * move_speed, acceleration * delta)
 	velocity.z = move_toward(velocity.z, direction.z * move_speed, acceleration * delta)
 
+	var jump_pressed := jump_requested or Input.is_action_just_pressed("jump")
+	jump_requested = false
 	if not is_on_floor():
 		velocity.y -= gravity * delta
-	elif Input.is_action_just_pressed("jump"):
+	elif jump_pressed:
 		velocity.y = jump_velocity
 
 	move_and_slide()

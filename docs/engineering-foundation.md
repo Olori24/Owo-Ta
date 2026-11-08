@@ -2,45 +2,42 @@
 
 ## Purpose
 
-OWO TÀ is a mobile-first, 3D action-adventure prototype intended to evolve into an independently owned commercial game. The project foundation prioritizes reproducibility, clear ownership, and a minimal, testable core so the 3D open-world system can expand without architectural drift.
+OWO TÀ is a mobile-first, 3D action-adventure prototype intended to evolve into an independently owned commercial game. The project foundation prioritizes reproducibility, clear ownership, and a minimal, testable core so gameplay can expand without architectural drift.
 
 ## Approved stack
 
-- Godot 4.x
-- GDScript
-- Blender for 3D assets
-- GitHub private repository
-- GitHub Codespaces
-- GitHub Actions
+- Godot 4.x and GDScript
+- Blender for 3D asset creation
+- GitHub, private-repository workflow, Codespaces, and GitHub Actions
 - Android APK/AAB export
 
 ## Technical decisions
 
-1. Use the Godot 4.x baseline and keep the project root as the authoritative source for runtime and export configuration.
-2. Keep the project mobile-oriented from the first milestone by enabling mobile rendering and portrait viewport defaults.
-3. Maintain a small test scene to validate engine startup and project bootability before any world-generation work begins.
-4. Keep the Android export configuration in-repo with explicit SDK/environment checks so the build fails clearly rather than silently.
-5. Use CI to validate the project at a pinned engine version to avoid hidden environment regressions.
+1. Keep the Godot project root as the source of truth for runtime, renderer, input, and export configuration.
+2. Target mobile rendering and portrait viewport defaults from the foundation stage.
+3. Treat `application/run/main_scene` as the configured startup contract. `scripts/ProjectValidation.gd` instantiates that scene and fails if the world, player, collision, camera, environment, lighting, or touch overlay is missing.
+4. Keep locomotion and collision on a `CharacterBody3D` root. Movement uses the camera's horizontal basis; only the visible body mesh rotates toward movement so facing cannot feed back into camera heading.
+5. Route joystick, camera-look, and jump touches through the mobile overlay. Jump taps are buffered until a physics tick; touch actions and pending jumps are cleared on release, app pause/focus loss, or control removal.
+6. Run a headless behavior suite against the configured main scene. It covers touch routing/release, camera-relative movement, visible-body turning, camera-heading stability, gravity, and jumping.
+7. Pin CI to Godot 4.3 stable and a fixed Ubuntu LTS runner. Keep Android SDK platform/build-tools versions explicit; verify the APK is nonempty and passes archive-integrity validation before upload.
+8. Do not add proprietary generation dependencies, unlicensed assets, secrets, or external paid-service requirements to the project.
 
 ## Repository structure
 
-- `project.godot`: root Godot configuration
-- `scenes/TestScene.tscn`: startup scene used for validation
-- `scripts/`: GDScript logic and validation helpers
-- `docs/`: architecture, contribution rules, inventory, and licensing
-- `.github/workflows/`: pinned validation and Android export automation
-- `build/`: export output directory, ignored by Git
+- `project.godot`: root Godot configuration and configured main scene
+- `scenes/world/first_district.tscn`: current greybox 3D startup world
+- `scenes/characters/player.tscn`: collision, visible body mesh, and third-person camera rig
+- `scenes/TestScene.tscn`: minimal test fixture; not the configured startup scene
+- `scripts/player/` and `scripts/ui/`: gameplay controller and mobile controls
+- `scripts/ProjectValidation.gd` and `scripts/tests/`: structural validation and behavior tests
+- `docs/`: architecture, contribution rules, asset inventory, and licensing register
+- `.github/workflows/`: pinned validation and Android debug export automation
+- `build/`: local/export output, ignored by Git
 
 ## Current milestone status
 
-The repository now contains a working Godot foundation with:
-
-- a valid project file,
-- a minimal bootable scene,
-- a mobile-rendering profile,
-- an Android export preset, and
-- a CI validation pipeline pinned to Godot 4.3-stable.
+The Phase 002 foundation includes a greybox first-district scene; a `CharacterBody3D` player with collision, camera-relative locomotion, gravity, and buffered jump; a third-person camera and visible-body rotation; multi-touch joystick/look/jump controls with release cleanup; structural validation of the configured main scene; automated behavior tests; Android APK/AAB export presets; and pinned Godot 4.3 CI. The debug APK pipeline now exports and verifies a real APK artifact before upload. No Android device test is implied by headless validation.
 
 ## Required next milestone
 
-The next stage is to add a verified 3D scene graph and gameplay bootstrapping as the groundwork for open-world systems, while continuing to validate the project in headless CI.
+Complete and verify the GitHub Actions debug APK export, install it on a physical Android device, and record input/camera/frame-rate issues across target screen sizes. After that, define a small 3D gameplay vertical slice and asset criteria. Do not expand into the full open world, vehicles, or production character assets until the 3D foundation and device behavior are validated.
