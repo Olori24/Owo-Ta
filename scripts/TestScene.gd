@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 @onready var title_label: Label = $Title
 @onready var status_label: Label = $Status
