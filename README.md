@@ -129,9 +129,9 @@ Godot is suitable for the core game, but a successful headless test is not proof
 
 **Phase 001: Godot foundation** has been merged into `main`.
 
-**Phase 002: First playable 3D district and mobile controls** is under review in [PR #3](https://github.com/Olori24/Owo-Ta/pull/3). The current implementation is a functional greybox: a 3D district blockout, placeholder player, third-person camera, movement, jumping, and touch controls. It is not final art and does not yet contain the full Lagos world, production character models, vehicles, or missions.
+**Phase 002: First playable 3D district and mobile controls** is proposed in [PR #3](https://github.com/Olori24/Owo-Ta/pull/3) and has not yet been merged. The playable greybox exists on that PR branch, not in the current `main` checkout. It contains a 3D district blockout, placeholder player, third-person camera, movement, jumping, and touch controls. It is not final art and does not yet contain the full Lagos world, production character models, vehicles, or missions.
 
-The latest known Phase 002 commit is `8468f180463aadd568f93e5ad109aea52731b722`. The physical BuildingA collision test was strengthened on this commit. Do not treat that latest change as validated until its exact commit has a successful CI run. An Android APK was exported successfully on an earlier Phase 002 commit and installed by the project owner; this does not prove the latest commit has been rebuilt or fully tested on-device.
+The latest verified Phase 002 commit is `b7604ebe5343dfda3c9797cb4f50f697b0eef4f6`. Godot validation and the Android debug export both passed for that exact commit, and a verified APK artifact was uploaded. The APK has not yet been confirmed as installed and tested by the project owner on a physical Android device.
 
 ## Development roadmap
 
