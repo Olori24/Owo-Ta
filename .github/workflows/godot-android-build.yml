@@ -23,13 +23,14 @@ jobs:
           java-version: '17'
       - name: Download pinned Godot and export templates
         run: |
-          mkdir -p .tools "$HOME/.local/share/godot/export_templates/4.3.stable"
+          mkdir -p .tools/export_templates "$HOME/.local/share/godot/export_templates/4.3.stable"
           curl --fail --location --retry 3 -o .tools/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
           unzip -q .tools/godot.zip -d .tools
           chmod +x .tools/Godot_v4.3-stable_linux.x86_64
           mv .tools/Godot_v4.3-stable_linux.x86_64 .tools/godot
           curl --fail --location --retry 3 -o .tools/export_templates.tpz https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
-          unzip -q .tools/export_templates.tpz -d "$HOME/.local/share/godot/export_templates/4.3.stable"
+          unzip -q .tools/export_templates.tpz -d .tools/export_templates
+          cp -a .tools/export_templates/templates/. "$HOME/.local/share/godot/export_templates/4.3.stable/"
       - name: Install Android SDK command line tools
         run: |
           mkdir -p "$RUNNER_TEMP/android-sdk/cmdline-tools" "$RUNNER_TEMP/cmdline-tools-unpack"
