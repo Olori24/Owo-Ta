@@ -6,19 +6,16 @@ var active_look_touch := -1
 var move_origin := Vector2.ZERO
 var move_vector := Vector2.ZERO
 var last_look_position := Vector2.ZERO
-var jump_pressed := false
+var jump_touch := -1
 const JOYSTICK_RADIUS := 78.0
 const JUMP_RADIUS := 48.0
 
 func _ready() -> void:
-	_register_actions()
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	set_process(true)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
-func _register_actions() -> void:
-	for action in ["move_left", "move_right", "move_forward", "move_back", "jump"]:
-		if not InputMap.has_action(action):
-			InputMap.add_action(action)
+func _process(_delta: float) -> void:
+	queue_redraw()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -27,6 +24,9 @@ func _input(event: InputEvent) -> void:
 				active_move_touch = event.index
 				move_origin = event.position
 				move_vector = Vector2.ZERO
+			elif event.position.x >= size.x * 0.48 and event.position.y > size.y * 0.65:
+				jump_touch = event.index
+				Input.action_press("jump")
 			elif event.position.x >= size.x * 0.48 and active_look_touch == -1:
 				active_look_touch = event.index
 				last_look_position = event.position
@@ -37,7 +37,8 @@ func _input(event: InputEvent) -> void:
 				_update_move_actions()
 			if event.index == active_look_touch:
 				active_look_touch = -1
-			if event.position.y > size.y * 0.65 and event.position.x > size.x * 0.72:
+			if event.index == jump_touch:
+				jump_touch = -1
 				Input.action_release("jump")
 	elif event is InputEventScreenDrag:
 		if event.index == active_move_touch:
@@ -66,4 +67,4 @@ func _draw() -> void:
 		draw_circle(move_origin, JOYSTICK_RADIUS, Color(0.1, 0.15, 0.18, 0.35))
 		draw_circle(move_origin + move_vector * JOYSTICK_RADIUS, 28.0, Color(0.35, 0.85, 0.75, 0.8))
 	draw_circle(Vector2(size.x - 82.0, size.y - 92.0), JUMP_RADIUS, Color(0.95, 0.72, 0.25, 0.45))
-	draw_string(ThemeDB.fallback_font, Vector2(size.x - 96.0, size.y - 82.0), "JUMP", HORIZONTAL_ALIGNMENT_CENTER, 64.0, 16, Color.WHITE)
+	draw_string(ThemeDB.fallback_font, Vector2(size.x - 108.0, size.y - 86.0), "JUMP", HORIZONTAL_ALIGNMENT_CENTER, 64.0, 16, Color.WHITE)
