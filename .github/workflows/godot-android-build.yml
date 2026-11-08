@@ -51,7 +51,7 @@ jobs:
           ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
         run: |
           mkdir -p build/android
-          ./.tools/godot --headless --path . --export-debug "Android" build/android/owo_ta-debug.apk
+          ./.tools/godot --headless --path . --export-debug "Android Debug APK" build/android/owo_ta-debug.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
