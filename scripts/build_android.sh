@@ -16,5 +16,5 @@ if [ -z "${ANDROID_HOME:-}" ]; then
 fi
 mkdir -p build/android
 "$GODOT_BIN" --headless --path . --install-android-build-template
-"$GODOT_BIN" --headless --path . --export-debug "Android" build/android/owo_ta-debug.apk
+"$GODOT_BIN" --headless --path . --export-debug "Android Debug APK" build/android/owo_ta-debug.apk
 echo "Android export completed: build/android/owo_ta-debug.apk"
