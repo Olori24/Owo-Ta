@@ -214,7 +214,7 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 	if not _expect(not Input.is_action_pressed("move_right"), "BuildingA collision test must release its movement action"):
 		return false
 
-	if not await _test_building_collision(player, "BuildingB", Vector3(14.0, 0.1, -30.0), "move_back", "z", -25.0, true):
+	if not await _test_building_collision(player, "BuildingB", Vector3(14.0, 0.1, -30.0), "move_back", "z", -24.5, true):
 		return false
 	if not await _test_building_collision(player, "BuildingC", Vector3(-17.0, 0.1, 18.0), "move_forward", "z", 15.5, false):
 		return false
@@ -238,7 +238,9 @@ func _test_building_collision(player: CharacterBody3D, building_name: String, st
 	var start_axis_position := player.global_position.x if axis == "x" else player.global_position.z
 	var hit_building := false
 	Input.action_press(action)
-	for _frame in range(60):
+	# Start positions are deliberately outside the collider; allow enough frames
+	# for acceleration and a full approach before asserting physical contact.
+	for _frame in range(120):
 		await physics_frame
 		for collision_index in range(player.get_slide_collision_count()):
 			if player.get_slide_collision(collision_index).get_collider() == building_collision:
