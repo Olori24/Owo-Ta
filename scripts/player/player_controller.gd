@@ -8,6 +8,9 @@ class_name OwoTaPlayer
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var jump_requested := false
+var character_animation_player: AnimationPlayer
+var current_animation := ""
+var landing_animation_active := false
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var visual_body: Node3D = $Body
@@ -15,6 +18,11 @@ var jump_requested := false
 func _ready() -> void:
 	add_to_group("player")
 	_register_actions()
+	character_animation_player = _find_animation_player($Body/CharacterVisual)
+	if character_animation_player != null:
+		character_animation_player.animation_finished.connect(_on_character_animation_finished)
+		_configure_character_animation_loops()
+	_play_character_animation("idle")
 
 func _register_actions() -> void:
 	var bindings := {
@@ -62,7 +70,9 @@ func _physics_process(delta: float) -> void:
 	elif jump_pressed:
 		velocity.y = jump_velocity
 
+	var was_on_floor := is_on_floor()
 	move_and_slide()
+	_update_character_animation(direction, was_on_floor)
 
 	# Rotate only the visible mesh. Rotating CharacterBody3D would also rotate
 	# CameraPivot and feed the character's facing back into camera-relative movement.
@@ -80,3 +90,46 @@ func apply_look(delta_pixels: Vector2) -> void:
 		deg_to_rad(-35.0),
 		deg_to_rad(25.0)
 	)
+
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node as AnimationPlayer
+	for child in node.get_children():
+		var found := _find_animation_player(child)
+		if found != null:
+			return found
+	return null
+
+func _configure_character_animation_loops() -> void:
+	for animation_name in ["idle", "walk", "run"]:
+		if character_animation_player.has_animation(animation_name):
+			character_animation_player.get_animation(animation_name).loop_mode = Animation.LOOP_LINEAR
+	if character_animation_player.has_animation("landing"):
+		character_animation_player.get_animation("landing").loop_mode = Animation.LOOP_NONE
+
+func _on_character_animation_finished(animation_name: StringName) -> void:
+	if animation_name == &"landing":
+		landing_animation_active = false
+		current_animation = ""
+
+func _play_character_animation(animation_name: String) -> void:
+	if character_animation_player == null or not character_animation_player.has_animation(animation_name):
+		return
+	if current_animation == animation_name and character_animation_player.is_playing():
+		return
+	current_animation = animation_name
+	landing_animation_active = animation_name == "landing"
+	character_animation_player.play(animation_name)
+
+func _update_character_animation(direction: Vector3, was_on_floor: bool) -> void:
+	if not is_on_floor():
+		landing_animation_active = false
+		_play_character_animation("jump")
+	elif not was_on_floor:
+		_play_character_animation("landing")
+	elif landing_animation_active and character_animation_player != null and character_animation_player.is_playing():
+		return
+	elif direction.length() > 0.1:
+		_play_character_animation("run" if Vector2(velocity.x, velocity.z).length() > 4.5 else "walk")
+	else:
+		_play_character_animation("idle")
