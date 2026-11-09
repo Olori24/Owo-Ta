@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/character_selection.gd" id="1_selection"]
 [ext_resource type="Resource" path="res://assets/characters/kemi_adebayo/kemi_adebayo.tres" id="2_kemi"]
 [ext_resource type="Script" path="res://scripts/characters/character_definition.gd" id="3_definition"]
+[ext_resource type="Resource" path="res://assets/characters/tunde_balogun/tunde_balogun.tres" id="4_tunde"]
+[ext_resource type="Resource" path="res://assets/characters/amara_okonkwo/amara_okonkwo.tres" id="5_amara"]
 
 [sub_resource type="Environment" id="Environment_inspection"]
 background_mode = 1
@@ -14,7 +16,7 @@ reflected_light_source = 2
 
 [node name="CharacterSelection" type="Node3D"]
 script = ExtResource("1_selection")
-characters = Array[ExtResource("3_definition")]([ExtResource("2_kemi")])
+characters = Array[ExtResource("3_definition")]([ExtResource("2_kemi"), ExtResource("4_tunde"), ExtResource("5_amara")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_inspection")

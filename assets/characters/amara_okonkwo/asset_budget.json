@@ -1,0 +1,57 @@
+{
+  "character_id": "amara_okonkwo",
+  "display_name": "Amara Okonkwo",
+  "identity": {
+    "gender_presentation": "female",
+    "role": "Landscape architect · futsal coach",
+    "bio": "A fictional contemporary Nigerian landscape architect who maps public play spaces and volunteers as a futsal coach. Amara is precise, warm and direct. One individual, not a generalized cultural portrait."
+  },
+  "expressive_action": "field_sketch",
+  "classification": "project guardrails and measured targets; not platform hard limits or device performance claims",
+  "toolchain": {
+    "asset_authoring": "Blender 4.0.2",
+    "runtime_import_validation": "Godot 4.3 stable",
+    "generation_script": "assets/characters/amara_okonkwo/build_amara_okonkwo.py"
+  },
+  "limits": {
+    "glb_bytes_max": 10485760,
+    "triangles_max": 30000,
+    "material_surfaces_max": 5,
+    "texture_files_max": 4,
+    "texture_dimension_max": 2048,
+    "texture_total_bytes_max": 2097152,
+    "deforming_bones_max": 65,
+    "vertex_influences_max": 4,
+    "animation_clips_min": 8,
+    "animation_clips_max": 8
+  },
+  "measured_export": {
+    "glb_bytes": 1625048,
+    "glb_sha256": "9989701ff9654c78b5f8b3a5c895130366f1ee0dbf1e54cfd97530a8f413656e",
+    "editable_blend_bytes": 3759808,
+    "vertices": 16382,
+    "triangles": 17564,
+    "material_surfaces": 4,
+    "materials": 4,
+    "embedded_images": 4,
+    "source_texture_bytes": 244957,
+    "skeleton_joints": 22,
+    "animation_clip_count": 8
+  },
+  "required_animation_clips": [
+    "idle",
+    "walk",
+    "run",
+    "jump",
+    "landing",
+    "turn",
+    "stop",
+    "field_sketch"
+  ],
+  "notes": [
+    "Limits are project estimates informed by the existing character asset budget; they are not Android hardware guarantees.",
+    "Confirm imported memory, frame time, thermal behavior and art quality on representative mid-range Android devices before release.",
+    "The four authored base-colour images are embedded in the GLB; metallic and roughness are set in the PBR materials.",
+    "Measured output values and GLB SHA-256 are validated by AdditionalCharacterRosterValidation.gd and Blender rebuild checks."
+  ]
+}

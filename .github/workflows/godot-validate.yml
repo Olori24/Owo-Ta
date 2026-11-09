@@ -45,3 +45,6 @@ jobs:
         env:
           OWO_REQUIRE_IMPORTED_CHARACTER_SCENE: "1"
         run: ./.tools/godot --headless --path . --script res://scripts/tests/CharacterPipelineValidation.gd
+
+      - name: Validate Phase 003B roster, character assets and animations
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/AdditionalCharacterRosterValidation.gd

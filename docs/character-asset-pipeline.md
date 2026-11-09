@@ -1,8 +1,8 @@
-# Phase 003 — Original character asset and selection pipeline
+# Phase 003 / 003B — Original character asset and selection pipeline
 
 ## Scope and status
 
-This milestone adds one original stylized character, Kemi Adebayo, and a standalone Godot 3D inspection/selection scene. It is a working first character vertical slice, not final production character art and not evidence that the whole game is complete. The active project main scene remains the Phase 002 district; this work does not replace the player controller, district, or mobile gameplay controls.
+Phase 003 introduced Kemi Adebayo and a standalone Godot 3D inspection/selection scene. Phase 003B adds two original characters, Tunde Balogun and Amara Okonkwo, to that selection scene, bringing its authored roster to three. This is a working character-asset and selection slice, not final production character art and not evidence that the whole game is complete. The active project main scene remains the Phase 002 district; this work does not replace the player controller, district, or mobile gameplay controls.
 
 Kemi is one fictional Lagos-raised vehicle electrical/audio technician. The character is not intended as a universal representation of Nigerian or Lagosian people.
 
@@ -21,12 +21,27 @@ blender --background --python tools/blender/build_kemi_character.py
 
 The export uses ordinary glTF 2.0 and does not require Draco compression. Blender may log that its optional Draco library is unavailable; the standard GLB export still completes and is validated without a Draco extension. Keep generated `.blend1` backup files out of Git.
 
+## Phase 003B additions
+
+`assets/characters/tunde_balogun/build_tunde_balogun.py` and `assets/characters/amara_okonkwo/build_amara_okonkwo.py` deterministically author two distinct fictional contemporary Nigerian characters with separate silhouettes, clothing, hairstyles and palettes. Each generator creates the editable `.blend`, four 256×256 source maps, an inspection render, and a glTF 2.0 binary with a 22-joint humanoid rig, four PBR material surfaces, UVs, skin weights and eight named clips. Tunde's expressive clip is `radio_check`; Amara's is `field_sketch`. Each directory contains its own `PROVENANCE.md` and `asset_budget.json`.
+
+The existing `scenes/characters/character_selection.tscn` now references Kemi, Tunde and Amara in that order. The standalone selection controller previews each imported GLB and emits the selected `CharacterDefinition`; `project.godot` still starts in the Phase 002 district, so this scene is not the configured game startup scene. The machine-readable roster index is `assets/characters/phase003b_roster.json`.
+
+Rebuild the additions with Blender 4.0.2:
+
+```bash
+blender --background --factory-startup --python assets/characters/tunde_balogun/build_tunde_balogun.py
+blender --background --factory-startup --python assets/characters/amara_okonkwo/build_amara_okonkwo.py
+```
+
+Both rebuilds were run twice; their GLB and four source texture files were byte-identical on the repeat build. Blender is an authoring tool, not a runtime dependency. Each new character's detailed source ownership and third-party status is recorded in its `PROVENANCE.md`.
+
 ## Godot architecture
 
 - `scripts/characters/character_definition.gd` is a reusable data resource containing stable character ID, display name, biography, role, preview accent, visual `PackedScene`, and named animation clips. It owns no player movement or district behavior.
-- `assets/characters/kemi_adebayo/kemi_adebayo.tres` provides Kemi's definition and points at the imported visual scene.
+- `assets/characters/kemi_adebayo/kemi_adebayo.tres` provides Kemi's definition and points at the imported visual scene. Phase 003B adds corresponding definitions under each new character directory.
 - `scripts/characters/character_selection.gd` is a standalone controller for roster wrapping, animation preview, a selection signal, mouse/touch orbit, scroll/pinch zoom, and camera pitch/distance clamps.
-- `scenes/characters/character_selection.tscn` owns the inspection camera, lights, environment and visible selection UI. It does not become the configured game startup scene until an explicit later integration decision.
+- `scenes/characters/character_selection.tscn` owns the inspection camera, lights, environment, selection UI and the three-definition roster. It does not become the configured game startup scene until a later integration decision.
 - Existing `scripts/player/`, `scripts/ui/`, `scenes/world/first_district.tscn`, and Phase 002 startup validation remain unchanged by the character pipeline.
 
 The UI is intentionally limited to character inspection and selection: it displays the current definition, lets the user step through a reusable typed roster, previews the `idle` clip when it exists, and emits `character_selected(definition)` when selected. A future game-start flow can consume that signal without embedding roster logic in the controller.
@@ -45,7 +60,9 @@ The asset budget currently includes:
 - Up to 65 deforming bones and four vertex influences (project interoperability targets).
 - Eight to twelve named animation clips, with the eight required Kemi clips listed in the manifest.
 
-Measured from the current Blender 4.0.2 output: `kemi_adebayo.glb` is 1,493,040 bytes with 14,666 exported position vertices across four surfaces, 15,040 triangles, four materials, four 256×256 base-colour maps (244,800 encoded bytes total), 22 skin joints, and eight clips. The editable `.blend` is 3,500,872 bytes. Two consecutive A-pose builds produced the same GLB SHA-256: `c95a99a9fe1df9f46c650a12b3907fbd24ec93a9ed4d39ceacf776e62dd9ab63`. These are measurements for this build, not device performance claims.
+Measured from the current Blender 4.0.2 outputs: `kemi_adebayo.glb` is 1,493,040 bytes with 14,666 exported position vertices across four surfaces, 15,040 triangles, four materials, four 256×256 base-colour maps (244,800 encoded bytes total), 22 skin joints, and eight clips. The editable `.blend` is 3,500,872 bytes. Two consecutive Kemi builds produced the same GLB SHA-256: `c95a99a9fe1df9f46c650a12b3907fbd24ec93a9ed4d39ceacf776e62dd9ab63`.
+
+Tunde's measured GLB is 1,585,056 bytes with 15,874 vertices, 16,688 triangles, four surfaces/materials, four embedded images (244,947 source-texture bytes), 22 joints, and eight clips. His `.blend` is 3,684,904 bytes and his GLB SHA-256 is `96990168ab2730cec041815b86392ceb5ae09b611765b8cae185f72f81ff7aab`. Amara's measured GLB is 1,625,048 bytes with 16,382 vertices, 17,564 triangles, four surfaces/materials, four embedded images (244,957 source-texture bytes), 22 joints, and eight clips. Her `.blend` is 3,759,808 bytes and her GLB SHA-256 is `9989701ff9654c78b5f8b3a5c895130366f1ee0dbf1e54cfd97530a8f413656e`. The new-character measurements and checksums are also recorded in their budget manifests. These are output measurements, not device performance claims.
 
 These thresholds are initial guardrails, not a substitute for measuring imported memory, rendering performance, thermal behavior, or visual quality on representative Android hardware. Do not expand the roster or claim shipping readiness before those checks.
 
@@ -59,6 +76,7 @@ Use the project-pinned Godot 4.3 binary. After the normal editor import has run,
 ./.tools/godot --headless --path . --script res://scripts/tests/GameplayFoundationTests.gd
 OWO_REQUIRE_IMPORTED_CHARACTER_SCENE=1 \
   ./.tools/godot --headless --path . --script res://scripts/tests/CharacterPipelineValidation.gd
+./.tools/godot --headless --path . --script res://scripts/tests/AdditionalCharacterRosterValidation.gd
 ```
 
 No Android export or physical-device test is implied by the Blender render, static asset budgets, or headless Godot test. The next milestone is human art/animation review and an actual imported-scene smoke test on an Android device, followed by an explicit decision about where the selection scene belongs in the game flow.
