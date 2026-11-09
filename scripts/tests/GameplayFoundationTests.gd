@@ -43,7 +43,7 @@ func _run_tests() -> void:
 	if not _test_touch_controls(player, controls):
 		quit(1)
 		return
-	if not await _test_player_physics(player, controls):
+	if not await _test_player_physics(player, controls, character_animation):
 		quit(1)
 		return
 
@@ -137,7 +137,7 @@ func _test_touch_controls(player: CharacterBody3D, controls: Control) -> bool:
 	_release_test_actions()
 	return true
 
-func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
+func _test_player_physics(player: CharacterBody3D, controls: Control, character_animation: AnimationPlayer) -> bool:
 	_release_test_actions()
 	player.global_position = Vector3(0.0, 8.0, 0.0)
 	player.velocity = Vector3.ZERO
