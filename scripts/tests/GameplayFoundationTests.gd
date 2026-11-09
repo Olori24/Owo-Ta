@@ -245,6 +245,7 @@ func _test_building_collision(player: CharacterBody3D, building_name: String, st
 				hit_building = true
 	Input.action_release(action)
 	var final_axis_position := player.global_position.x if axis == "x" else player.global_position.z
+	print("COLLISION_DIAGNOSTIC: %s start=%s final=%s velocity=%s hit=%s" % [building_name, start_position, player.global_position, player.velocity, hit_building])
 	var displacement := absf(final_axis_position - start_axis_position)
 	if not _expect(displacement > 1.0, "Player should move toward " + building_name + " during its collision test."):
 		return false
