@@ -1,0 +1,101 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
+
+[sub_resource type="Environment" id="Environment_world"]
+background_mode = 1
+background_color = Color(0.35, 0.55, 0.68, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.78, 0.82, 1)
+ambient_light_energy = 0.7
+
+[sub_resource type="BoxMesh" id="GroundMesh"]
+size = Vector3(90, 0.5, 90)
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(90, 0.5, 90)
+
+[sub_resource type="BoxMesh" id="RoadMesh"]
+size = Vector3(12, 0.08, 90)
+
+[sub_resource type="BoxMesh" id="BuildingMesh"]
+size = Vector3(7, 9, 7)
+
+[sub_resource type="BoxShape3D" id="BuildingCollisionShape"]
+size = Vector3(7, 9, 7)
+
+[sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
+albedo_color = Color(0.73, 0.49, 0.31, 1)
+
+[node name="FirstDistrict" type="Node3D"]
+groups = ["game_world"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_world")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-52, -28, 0)
+shadow_enabled = true
+light_energy = 1.1
+
+[node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.25, 0)
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("GroundMesh")
+
+[node name="GroundCollision" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="Road" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, -8)
+mesh = SubResource("RoadMesh")
+
+[node name="BuildingA" type="MeshInstance3D" parent="."]
+position = Vector3(-13, 4.5, -13)
+mesh = SubResource("BuildingMesh")
+material_override = SubResource("BuildingMaterial")
+
+[node name="BuildingACollision" type="StaticBody3D" parent="."]
+position = Vector3(-13, 4.5, -13)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingACollision"]
+shape = SubResource("BuildingCollisionShape")
+
+[node name="BuildingB" type="MeshInstance3D" parent="."]
+position = Vector3(14, 4.5, -21)
+mesh = SubResource("BuildingMesh")
+material_override = SubResource("BuildingMaterial")
+
+[node name="BuildingBCollision" type="StaticBody3D" parent="."]
+position = Vector3(14, 4.5, -21)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingBCollision"]
+shape = SubResource("BuildingCollisionShape")
+
+[node name="BuildingC" type="MeshInstance3D" parent="."]
+position = Vector3(-17, 4.5, 12)
+mesh = SubResource("BuildingMesh")
+material_override = SubResource("BuildingMaterial")
+
+[node name="BuildingCCollision" type="StaticBody3D" parent="."]
+position = Vector3(-17, 4.5, 12)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingCCollision"]
+shape = SubResource("BuildingCollisionShape")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector3(0, 0.1, 3)
+
+[node name="MobileControls" type="CanvasLayer" parent="."]
+
+[node name="TouchOverlay" type="Control" parent="MobileControls"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("2_controls")
