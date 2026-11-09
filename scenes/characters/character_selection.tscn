@@ -1,0 +1,112 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/character_selection.gd" id="1_selection"]
+[ext_resource type="Resource" path="res://assets/characters/kemi_adebayo/kemi_adebayo.tres" id="2_kemi"]
+[ext_resource type="Script" path="res://scripts/characters/character_definition.gd" id="3_definition"]
+
+[sub_resource type="Environment" id="Environment_inspection"]
+background_mode = 1
+background_color = Color(0.055, 0.07, 0.085, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.7, 0.76, 0.82, 1)
+ambient_light_energy = 0.65
+reflected_light_source = 2
+
+[node name="CharacterSelection" type="Node3D"]
+script = ExtResource("1_selection")
+characters = Array[ExtResource("3_definition")]([ExtResource("2_kemi")])
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_inspection")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.72, -0.65, 0.1)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="FillLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.25, 2.5, 0)
+light_energy = 0.45
+
+[node name="OrbitPivot" type="Node3D" parent="."]
+position = Vector3(0, 0.9, 0)
+
+[node name="ModelAnchor" type="Node3D" parent="OrbitPivot"]
+position = Vector3(0, -0.9, 0)
+
+[node name="Camera3D" type="Camera3D" parent="OrbitPivot"]
+current = true
+
+[node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="Interface"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Interface/Root"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 700.0
+offset_bottom = 500.0
+
+[node name="Content" type="VBoxContainer" parent="Interface/Root/Panel"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Interface/Root/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Choose your character"
+
+[node name="NameLabel" type="Label" parent="Interface/Root/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Loading character…"
+
+[node name="RoleLabel" type="Label" parent="Interface/Root/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = ""
+
+[node name="BioLabel" type="Label" parent="Interface/Root/Panel/Content"]
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+autowrap_mode = 2
+text = ""
+
+[node name="OrbitHint" type="Label" parent="Interface/Root/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Drag to orbit · scroll or pinch to zoom"
+
+[node name="RosterButtons" type="HBoxContainer" parent="Interface/Root/Panel/Content"]
+layout_mode = 2
+
+[node name="PreviousButton" type="Button" parent="Interface/Root/Panel/Content/RosterButtons"]
+custom_minimum_size = Vector2(140, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Previous"
+
+[node name="NextButton" type="Button" parent="Interface/Root/Panel/Content/RosterButtons"]
+custom_minimum_size = Vector2(140, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Next"
+
+[node name="SelectButton" type="Button" parent="Interface/Root/Panel/Content"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Select character"
+
+[node name="StatusLabel" type="Label" parent="Interface/Root/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = ""
