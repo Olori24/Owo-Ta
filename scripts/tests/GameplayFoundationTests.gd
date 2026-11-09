@@ -192,13 +192,19 @@ func _test_player_physics(player: CharacterBody3D, controls: Control, character_
 		await physics_frame
 	if not _expect(player.is_on_floor(), "player should be grounded before camera-relative movement testing"):
 		return false
+	# The landing clip is intentionally non-looping and must finish before locomotion resumes.
+	for _frame in range(90):
+		if not bool(player.get("landing_animation_active")):
+			break
+		await physics_frame
+	if not _expect(not bool(player.get("landing_animation_active")), "landing animation must finish before locomotion testing"):
+		return false
 	var start_position := player.global_position
 	Input.action_press("move_forward")
 	for _frame in range(24):
 		await physics_frame
 	Input.action_release("move_forward")
 	var displacement := player.global_position - start_position
-	print("ANIMATION_DIAGNOSTIC current=%s playing=%s landing=%s velocity=%s displacement=%s" % [character_animation.current_animation, character_animation.is_playing(), player.get("landing_animation_active"), player.velocity, displacement])
 	if not _expect(character_animation.current_animation == "run" or character_animation.current_animation == "walk", "Playable character must switch from idle to a locomotion animation while moving"):
 		return false
 	if not _expect(absf(displacement.x) > 0.25 and absf(displacement.x) > absf(displacement.z) * 2.0, "forward movement should follow the camera yaw rather than the initial body heading"):
