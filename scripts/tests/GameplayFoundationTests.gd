@@ -38,6 +38,11 @@ func _run_tests() -> void:
 			return
 	if not _expect(character_animation.current_animation == "idle", "Playable Kemi character must start in its idle animation"):
 		return
+	for clip in ["idle", "walk", "run"]:
+		if not _expect(character_animation.get_animation(clip).loop_mode == Animation.LOOP_LINEAR, clip + " must use linear looping"):
+			return
+	if not _expect(character_animation.get_animation("landing").loop_mode == Animation.LOOP_NONE, "landing must be a non-looping clip"):
+		return
 	controls.size = TEST_VIEW_SIZE
 
 	if not _test_touch_controls(player, controls):
@@ -151,6 +156,18 @@ func _test_player_physics(player: CharacterBody3D, controls: Control, character_
 	for _frame in range(18):
 		await physics_frame
 	if not _expect(player.is_on_floor(), "player should land on the district ground before jump testing"):
+		return false
+	player.call("_update_character_animation", Vector3.ZERO, false)
+	if not _expect(character_animation.current_animation == "landing", "a grounded transition must start the landing clip"):
+		return false
+	player.call("_update_character_animation", Vector3.ZERO, true)
+	if not _expect(character_animation.current_animation == "landing", "landing must remain active beyond the first grounded physics tick"):
+		return false
+	character_animation.advance(1.0)
+	if not _expect(not bool(player.get("landing_animation_active")), "landing completion signal must release the landing state"):
+		return false
+	player.call("_update_character_animation", Vector3.ZERO, true)
+	if not _expect(character_animation.current_animation == "idle", "normal idle selection must resume after landing completes"):
 		return false
 	var jump_start_height := player.global_position.y
 	var jump_center := TEST_VIEW_SIZE - Vector2(82.0, 92.0)
