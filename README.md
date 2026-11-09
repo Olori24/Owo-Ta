@@ -19,7 +19,7 @@
 
 OWO TÀ is an Android-first, third-person 3D adventure and racing game inspired by the energy, movement, humour, and street culture of Lagos, Nigeria. This is a growing street kingdom: from danfo-filled junctions and market roads to the bright skyline and fast lanes of the island.
 
-**This repository is the source of truth for the game.** The visuals below are original README illustrations that establish the intended art direction. They are not screenshots or claims that these features are already playable. The playable greybox currently lives on the unmerged Phase 002 PR #3 branch, not in `main`; it remains an early prototype, as described in [Development status](#current-development-status).
+**This repository is the source of truth for the game.** The visuals below are original README illustrations that establish the intended art direction. They are not screenshots or claims that these features are already playable. The first playable 3D greybox is now part of `main`: a Lagos-inspired district, third-person player movement, jumping, camera control, and mobile touch controls. It remains an early prototype, as described in [Development status](#current-development-status).
 
 ## Product direction
 
