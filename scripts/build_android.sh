@@ -7,7 +7,10 @@ if [ ! -x "$GODOT_BIN" ]; then
   echo "Godot 4.3 binary not found. Set GODOT_BIN or install it at $GODOT_BIN."
   exit 1
 fi
-GODOT_VERSION="$("$GODOT_BIN" --version)"
+if ! GODOT_VERSION="$("$GODOT_BIN" --version 2>/dev/null)"; then
+  echo "Unable to execute the configured Godot binary: $GODOT_BIN"
+  exit 1
+fi
 if [[ "$GODOT_VERSION" != 4.3.stable* ]]; then
   echo "Expected Godot 4.3 stable, got: $GODOT_VERSION"
   exit 1
@@ -47,4 +50,5 @@ mkdir -p build/android
 "$GODOT_BIN" --headless --path . --export-debug "Android Debug APK" build/android/owo_ta-debug.apk
 test -s build/android/owo_ta-debug.apk
 unzip -t build/android/owo_ta-debug.apk
+"$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs build/android/owo_ta-debug.apk
 echo "Android debug APK export completed and verified: build/android/owo_ta-debug.apk"
