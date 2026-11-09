@@ -211,7 +211,49 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		return false
 	if not _expect(player.global_position.x < -16.6, "player must stop at BuildingA rather than pass through its collision box"):
 		return false
-	if not _expect(not Input.is_action_pressed("move_right"), "building collision test must release its movement action"):
+	if not _expect(not Input.is_action_pressed("move_right"), "BuildingA collision test must release its movement action"):
+		return false
+
+	if not await _test_building_collision(player, "BuildingB", Vector3(14.0, 0.1, -30.0), "move_back", "z", -25.0, true):
+		return false
+	if not await _test_building_collision(player, "BuildingC", Vector3(-17.0, 0.1, 20.0), "move_forward", "z", 15.5, false):
+		return false
+	return true
+
+func _test_building_collision(player: CharacterBody3D, building_name: String, start_position: Vector3, action: String, axis: String, stop_boundary: float, less_than: bool) -> bool:
+	player.global_position = start_position
+	player.velocity = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	var camera_pivot := player.get_node_or_null("CameraPivot") as Node3D
+	if camera_pivot == null:
+		return _expect(false, "Camera pivot must remain available for " + building_name + " collision testing.")
+	camera_pivot.rotation = Vector3.ZERO
+	for _frame in range(18):
+		await physics_frame
+	if not _expect(player.is_on_floor(), "Player should be grounded before " + building_name + " collision testing."):
+		return false
+	var building_collision := player.get_parent().get_node_or_null(building_name + "Collision") as StaticBody3D
+	if not _expect(building_collision != null, building_name + " must have its expected StaticBody3D collision body."):
+		return false
+	var start_axis_position := player.global_position.x if axis == "x" else player.global_position.z
+	var hit_building := false
+	Input.action_press(action)
+	for _frame in range(60):
+		await physics_frame
+		for collision_index in range(player.get_slide_collision_count()):
+			if player.get_slide_collision(collision_index).get_collider() == building_collision:
+				hit_building = true
+	Input.action_release(action)
+	var final_axis_position := player.global_position.x if axis == "x" else player.global_position.z
+	var displacement := absf(final_axis_position - start_axis_position)
+	if not _expect(displacement > 1.0, "Player should move toward " + building_name + " during its collision test."):
+		return false
+	if not _expect(hit_building, "Player must physically register a slide collision with " + building_name + "Collision."):
+		return false
+	var stopped_before_building := final_axis_position < stop_boundary if less_than else final_axis_position > stop_boundary
+	if not _expect(stopped_before_building, "Player must stop against " + building_name + " rather than pass through its collision box."):
+		return false
+	if not _expect(not Input.is_action_pressed(action), building_name + " collision test must release its movement action."):
 		return false
 	return true
 

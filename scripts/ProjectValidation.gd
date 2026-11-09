@@ -87,8 +87,10 @@ func _validate_gameplay_scene(world: Node3D) -> bool:
 		var building_box := building_shape.shape as BoxShape3D
 		if building_box == null or not building_box.size.is_equal_approx(building_mesh.size):
 			return _fail(building_name + " collision dimensions must match the visible blockout mesh.")
-		if building_body.global_position.distance_to(building_visual.global_position) > 0.01:
-			return _fail(building_name + " collision body must align with its visible mesh.")
+		if not building_body.global_transform.is_equal_approx(building_visual.global_transform):
+			return _fail(building_name + " collision body transform must match its visible mesh.")
+		if not building_shape.transform.is_equal_approx(Transform3D.IDENTITY):
+			return _fail(building_name + " collision shape must not have an extra local transform.")
 
 	var controls_layer := world.get_node_or_null("MobileControls") as CanvasLayer
 	var touch_overlay := world.get_node_or_null("MobileControls/TouchOverlay") as Control
