@@ -15,11 +15,12 @@ if [[ "$GODOT_VERSION" != 4.3.stable* ]]; then
   echo "Expected Godot 4.3 stable, got: $GODOT_VERSION"
   exit 1
 fi
-if ! command -v java >/dev/null 2>&1; then
-  echo "Android export requires Java 17 or newer on PATH."
+if [ -z "${JAVA_HOME:-}" ] || [ ! -x "$JAVA_HOME/bin/java" ]; then
+  echo "Android export requires JAVA_HOME to point to a JDK with an executable bin/java."
   exit 2
 fi
-JAVA_VERSION_OUTPUT="$(java -version 2>&1)"
+JAVA_BIN="$JAVA_HOME/bin/java"
+JAVA_VERSION_OUTPUT="$("$JAVA_BIN" -version 2>&1)"
 JAVA_MAJOR="$(printf '%s\n' "$JAVA_VERSION_OUTPUT" | sed -nE '1s/.*version "([0-9]+).*/\1/p')"
 if [ -z "$JAVA_MAJOR" ] || [ "$JAVA_MAJOR" -lt 17 ]; then
   echo "Android export requires Java 17 or newer; detected: ${JAVA_VERSION_OUTPUT%%$'\n'*}"

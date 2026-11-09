@@ -225,6 +225,7 @@ For engine-level validation, install the pinned Godot 4.3 stable editor and matc
 ```bash
 godot --headless --editor --path . --quit
 godot --headless --path . --script res://scripts/ProjectValidation.gd
+godot --headless --path . --script res://scripts/tests/GameplayFoundationTests.gd
 ```
 
 A successful project validation confirms the configured project and scenes pass the checks implemented by the validator. It does not prove Android export, visual quality, or device performance.
