@@ -129,9 +129,9 @@ Godot is suitable for the core game, but a successful headless test is not proof
 
 **Phase 001: Godot foundation** has been merged into `main`.
 
-**Phase 002: First playable 3D district and mobile controls** is proposed in [PR #3](https://github.com/Olori24/Owo-Ta/pull/3) and has not yet been merged. The playable greybox exists on that PR branch, not in the current `main` checkout. It contains a 3D district blockout, placeholder player, third-person camera, movement, jumping, and touch controls. It is not final art and does not yet contain the full Lagos world, production character models, vehicles, or missions.
+**Phase 002: First playable 3D district and mobile controls** is proposed in [PR #3](https://github.com/Olori24/Owo-Ta). The slice contains a 3D district blockout, placeholder player, third-person camera, movement, jumping, and touch controls. It is not final art and does not yet contain the full Lagos world, production character models, vehicles, or missions.
 
-The latest Phase 002 PR head is `b7604ebe5343dfda3c9797cb4f50f697b0eef4f6`, based on `8349592a528b82baaaf43db109591f5c33bff513`. GitHub's PR validation and Android export passed for the tested merge result `3d32e0092104e329a4af5f9ecded54128e627b2d`, and a verified APK artifact was uploaded. The APK has not yet been confirmed as installed and tested by the project owner on a physical Android device.
+At commit `e0d5827e4c0e2b5e2f36f74c636a999d0304b32f`, GitHub project validation and Android export both passed, and a verified debug APK artifact was uploaded. These results apply to that commit; see the [current PR checks](https://github.com/Olori24/Owo-Ta/pull/3/checks) for the latest revision. The APK has not yet been confirmed as installed and tested by the project owner on a physical Android device.
 
 ## Development roadmap
 
@@ -239,7 +239,7 @@ A fresh checkout needs all of the following before local Android export:
 3. The **Android Debug APK** preset uses the standard template. For the **Android Release AAB** preset, install the matching Android Gradle build template into this project with Godot's `--install-android-build-template` command.
 4. Install JDK 17 and Android SDK command-line tools, platform-tools, Android 34 platform, and build-tools 34.0.0.
 5. Set `JAVA_HOME` and `ANDROID_HOME` (or `ANDROID_SDK_ROOT`) in the shell. In Godot Editor, configure the Java SDK and Android SDK paths under **Editor Settings > Export > Android**.
-6. Run `scripts/build_android.sh` to create the debug APK. The script checks prerequisites and installs the project Gradle build template for future AAB export; it does not install Java, the Android SDK, or the editor export templates.
+6. Run `scripts/build_android.sh` to create and verify the debug APK. This script does not install the project Gradle build template. If you later enable Gradle builds for the AAB preset, install the matching template through **Project > Install Android Build Template** in the Godot editor. The script does not install Java, the Android SDK, editor export templates, or the Gradle build template.
 
 The GitHub Actions workflow provisions the required tools and uploads a debug APK artifact when triggered by its configured events. Only a completed export workflow with a verified artifact proves that an APK was produced. A passing project-validation job alone is not an Android build.
 
