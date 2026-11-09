@@ -1,0 +1,38 @@
+{
+  "character_id": "kemi_adebayo",
+  "source_report": "CvQdZAGWvvRGGCALJbTDts",
+  "classification": "project validation estimates; not Android, Godot, glTF, or device hard limits",
+  "toolchain": {
+    "asset_authoring": "Blender 4.0.2",
+    "runtime_import_validation": "Godot 4.3 stable",
+    "generation_script": "tools/blender/build_kemi_character.py"
+  },
+  "limits": {
+    "glb_bytes_max": 10485760,
+    "triangles_max": 30000,
+    "material_surfaces_max": 5,
+    "texture_files_max": 4,
+    "texture_dimension_max": 2048,
+    "texture_total_bytes_max": 2097152,
+    "deforming_bones_max": 65,
+    "vertex_influences_max": 4,
+    "animation_clips_min": 8,
+    "animation_clips_max": 12
+  },
+  "required_animation_clips": [
+    "idle",
+    "walk",
+    "run",
+    "jump",
+    "landing",
+    "turn",
+    "stop",
+    "inspect"
+  ],
+  "notes": [
+    "The 30,000-triangle target is the upper end of the dossier's suggested hero LOD0 range.",
+    "The 10 MiB package target is a project estimate; measure imported memory on representative Android hardware.",
+    "The texture-dimension, total encoded texture byte, material, bone, and influence ceilings are validation guardrails, not platform capabilities or universal renderer limits.",
+    "Device profiling and physical-device review remain separate release gates."
+  ]
+}

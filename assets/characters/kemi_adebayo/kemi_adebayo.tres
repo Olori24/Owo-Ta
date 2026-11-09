@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CharacterDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/character_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://assets/characters/kemi_adebayo/kemi_adebayo.glb" id="2_visual"]
+
+[resource]
+script = ExtResource("1_definition")
+character_id = &"kemi_adebayo"
+display_name = "Kemi Adebayo"
+bio = "A Lagos-raised vehicle electrical and audio technician who is saving toward her next certification. This is one individual character, not a representation of every Nigerian or Lagosian."
+role = "Technician · driver"
+accent_color = Color(0.035, 0.48, 0.43, 1)
+visual_scene = ExtResource("2_visual")
+idle_clip = &"idle"
+walk_clip = &"walk"
+run_clip = &"run"
+jump_clip = &"jump"
+landing_clip = &"landing"
+turn_clip = &"turn"
+stop_clip = &"stop"

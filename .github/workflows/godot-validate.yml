@@ -40,3 +40,8 @@ jobs:
 
       - name: Run gameplay behavior tests
         run: ./.tools/godot --headless --path . --script res://scripts/tests/GameplayFoundationTests.gd
+
+      - name: Validate original character asset and selection scene
+        env:
+          OWO_REQUIRE_IMPORTED_CHARACTER_SCENE: "1"
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/CharacterPipelineValidation.gd

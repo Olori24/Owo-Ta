@@ -1,0 +1,1 @@
+Editable Blender authoring sources live here. Godot runtime imports the adjacent GLB, not this source folder.
