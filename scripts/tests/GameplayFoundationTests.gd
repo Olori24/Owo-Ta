@@ -26,6 +26,18 @@ func _run_tests() -> void:
 	if player == null or controls == null:
 		_fail("The configured scene must provide a player and touch overlay for gameplay tests.")
 		return
+	var character_visual := player.get_node_or_null("Body/CharacterVisual") as Node3D
+	if character_visual == null:
+		_fail("The playable player must instance Kemi's production 3D character visual.")
+		return
+	var character_animation := _find_animation_player(character_visual)
+	if not _expect(character_animation != null, "Playable Kemi character must expose its imported AnimationPlayer"):
+		return
+	for clip in ["idle", "walk", "run", "jump", "landing"]:
+		if not _expect(character_animation.has_animation(clip), "Playable Kemi character must expose " + clip + " animation"):
+			return
+	if not _expect(character_animation.current_animation == "idle", "Playable Kemi character must start in its idle animation"):
+		return
 	controls.size = TEST_VIEW_SIZE
 
 	if not _test_touch_controls(player, controls):
@@ -148,6 +160,8 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 	var jumped := player.velocity.y > 0.1 and player.global_position.y > jump_start_height
 	if not _expect(jumped, "grounded jump input should produce upward velocity and displacement"):
 		return false
+	if not _expect(character_animation.current_animation == "jump", "Playable character must play its jump animation when airborne"):
+		return false
 
 	player.global_position = Vector3(0.0, 0.1, 3.0)
 	player.velocity = Vector3.ZERO
@@ -167,6 +181,8 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		await physics_frame
 	Input.action_release("move_forward")
 	var displacement := player.global_position - start_position
+	if not _expect(character_animation.current_animation == "run" or character_animation.current_animation == "walk", "Playable character must switch from idle to a locomotion animation while moving"):
+		return false
 	if not _expect(absf(displacement.x) > 0.25 and absf(displacement.x) > absf(displacement.z) * 2.0, "forward movement should follow the camera yaw rather than the initial body heading"):
 		return false
 	var expected_body_yaw := PI / 2.0
@@ -251,3 +267,12 @@ func _expect(condition: bool, message: String) -> bool:
 func _fail(message: String) -> void:
 	push_error("OWO TÀ gameplay test failed: " + message)
 	quit(1)
+
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node as AnimationPlayer
+	for child in node.get_children():
+		var found := _find_animation_player(child)
+		if found != null:
+			return found
+	return null
