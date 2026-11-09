@@ -216,7 +216,7 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 
 	if not await _test_building_collision(player, "BuildingB", Vector3(14.0, 0.1, -30.0), "move_back", "z", -25.0, true):
 		return false
-	if not await _test_building_collision(player, "BuildingC", Vector3(-17.0, 0.1, 20.0), "move_forward", "z", 15.5, false):
+	if not await _test_building_collision(player, "BuildingC", Vector3(-17.0, 0.1, 18.0), "move_forward", "z", 15.5, false):
 		return false
 	return true
 
