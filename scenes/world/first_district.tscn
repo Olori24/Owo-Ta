@@ -126,8 +126,6 @@ mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
 [node name="BuildingACollision" type="StaticBody3D" parent="."]
-collision_layer = 0
-collision_mask = 0
 position = Vector3(-13, 4.5, -13)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingACollision"]
@@ -140,8 +138,6 @@ mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
 [node name="BuildingBCollision" type="StaticBody3D" parent="."]
-collision_layer = 0
-collision_mask = 0
 position = Vector3(14, 4.5, -21)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingBCollision"]
@@ -154,8 +150,6 @@ mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
 [node name="BuildingCCollision" type="StaticBody3D" parent="."]
-collision_layer = 0
-collision_mask = 0
 position = Vector3(-17, 4.5, 12)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingCCollision"]
