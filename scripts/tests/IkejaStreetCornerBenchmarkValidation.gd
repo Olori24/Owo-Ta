@@ -39,6 +39,11 @@ func _run() -> void:
 		_assert(world.get_node_or_null("LeftPavement") is MeshInstance3D and world.get_node_or_null("RightPavement") is MeshInstance3D, "Playable first district contains both pavements")
 		_assert(world.get_node_or_null("IkejaStorefront") != null, "Playable first district contains the Ikeja storefront")
 		_assert(world.get_node_or_null("IkejaBusStop") != null, "Playable first district contains the bus stop")
+		_assert(world.get_node_or_null("PharmacyFrontage/Sign") is Label3D, "Playable first district includes the pharmacy frontage and sign")
+		_assert(world.get_node_or_null("MamaTKitchenFrontage/Sign") is Label3D, "Playable first district includes a named food storefront")
+		_assert(world.get_node_or_null("AdeTailoringFrontage/Sign") is Label3D, "Playable first district includes a second named business frontage")
+		_assert(world.get_node_or_null("RoadsideKiosk") != null, "Playable first district includes a roadside kiosk")
+		_assert(world.get_node_or_null("SecondStreetLamp") != null, "Playable first district includes a second street lamp")
 		world.queue_free()
 		await process_frame
 	scene.queue_free()
