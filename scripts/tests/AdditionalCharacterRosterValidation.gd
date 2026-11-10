@@ -51,7 +51,7 @@ func _run() -> void:
 		if character_id == "kemi_adebayo":
 			_check(String(row.get("authored_in_phase", "")) == "003", "Existing Kemi entry is referenced without copying her source")
 			continue
-		_validate_character(character_id, definition, definition_path)
+		await _validate_character(character_id, definition, definition_path)
 
 	_check(ids.has("kemi_adebayo") and ids.has("tunde_balogun") and ids.has("amara_okonkwo"), "Roster IDs are the unchanged Kemi plus Tunde and Amara")
 	_check(gender_pair.has("male") and gender_pair.has("female"), "The new pair includes male and female representation")
