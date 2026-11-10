@@ -26,15 +26,15 @@
     "animation_clips_max": 8
   },
   "measured_export": {
-    "glb_bytes": 1585056,
-    "glb_sha256": "96990168ab2730cec041815b86392ceb5ae09b611765b8cae185f72f81ff7aab",
-    "editable_blend_bytes": 3684904,
+    "glb_bytes": 1587280,
+    "glb_sha256": "83fe968fbecbcb58cb02f0b5dc0cd0028af930a50a423af06b2d9298663056e5",
+    "editable_blend_bytes": 3685176,
     "vertices": 15874,
     "triangles": 16688,
     "material_surfaces": 4,
     "materials": 4,
     "embedded_images": 4,
-    "source_texture_bytes": 244947,
+    "source_texture_bytes": 245211,
     "skeleton_joints": 22,
     "animation_clip_count": 8
   },
@@ -54,4 +54,4 @@
     "The four authored base-colour images are embedded in the GLB; metallic and roughness are set in the PBR materials.",
     "Measured output values and GLB SHA-256 are validated by AdditionalCharacterRosterValidation.gd and Blender rebuild checks."
   ]
-}
+}\n
