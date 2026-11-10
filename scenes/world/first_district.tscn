@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
@@ -28,6 +28,73 @@ size = Vector3(7, 9, 7)
 [sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
 albedo_color = Color(0.73, 0.49, 0.31, 1)
 
+[sub_resource type="StandardMaterial3D" id="StreetAsphalt"]
+albedo_color = Color(0.12, 0.14, 0.16, 1)
+roughness = 0.96
+
+[sub_resource type="StandardMaterial3D" id="StreetConcrete"]
+albedo_color = Color(0.48, 0.48, 0.44, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="StreetPlaster"]
+albedo_color = Color(0.78, 0.68, 0.52, 1)
+roughness = 0.88
+
+[sub_resource type="StandardMaterial3D" id="StreetTerracotta"]
+albedo_color = Color(0.62, 0.29, 0.18, 1)
+roughness = 0.86
+
+[sub_resource type="StandardMaterial3D" id="StreetTeal"]
+albedo_color = Color(0.035, 0.32, 0.3, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="StreetMetal"]
+albedo_color = Color(0.12, 0.15, 0.17, 1)
+metallic = 0.55
+roughness = 0.48
+
+[sub_resource type="StandardMaterial3D" id="StreetGlass"]
+albedo_color = Color(0.22, 0.43, 0.49, 1)
+metallic = 0.12
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StreetYellow"]
+albedo_color = Color(0.96, 0.68, 0.12, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="StreetWhite"]
+albedo_color = Color(0.88, 0.87, 0.8, 1)
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="StreetLeaf"]
+albedo_color = Color(0.12, 0.3, 0.17, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="StreetPavementMesh"]
+size = Vector3(7, 0.24, 90)
+
+[sub_resource type="BoxMesh" id="StreetLaneDashMesh"]
+size = Vector3(0.18, 0.04, 2.2)
+
+[sub_resource type="BoxMesh" id="StreetCrosswalkMesh"]
+size = Vector3(0.72, 0.05, 1.8)
+
+[sub_resource type="BoxMesh" id="StreetShopMesh"]
+size = Vector3(10, 6, 5)
+
+[sub_resource type="BoxMesh" id="StreetWindowMesh"]
+size = Vector3(2.1, 1.65, 0.12)
+
+[sub_resource type="BoxMesh" id="StreetDoorMesh"]
+size = Vector3(1.25, 2.55, 0.18)
+
+[sub_resource type="BoxMesh" id="StreetAwningMesh"]
+size = Vector3(10, 0.28, 1.5)
+
+[sub_resource type="BoxShape3D" id="StreetShopCollision"]
+size = Vector3(10, 6, 5)
+
+
 [node name="FirstDistrict" type="Node3D"]
 groups = ["game_world"]
 
@@ -53,33 +120,42 @@ position = Vector3(0, 0.05, -8)
 mesh = SubResource("RoadMesh")
 
 [node name="BuildingA" type="MeshInstance3D" parent="."]
+visible = false
 position = Vector3(-13, 4.5, -13)
 mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
 [node name="BuildingACollision" type="StaticBody3D" parent="."]
+collision_layer = 0
+collision_mask = 0
 position = Vector3(-13, 4.5, -13)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingACollision"]
 shape = SubResource("BuildingCollisionShape")
 
 [node name="BuildingB" type="MeshInstance3D" parent="."]
+visible = false
 position = Vector3(14, 4.5, -21)
 mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
 [node name="BuildingBCollision" type="StaticBody3D" parent="."]
+collision_layer = 0
+collision_mask = 0
 position = Vector3(14, 4.5, -21)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingBCollision"]
 shape = SubResource("BuildingCollisionShape")
 
 [node name="BuildingC" type="MeshInstance3D" parent="."]
+visible = false
 position = Vector3(-17, 4.5, 12)
 mesh = SubResource("BuildingMesh")
 material_override = SubResource("BuildingMaterial")
 
 [node name="BuildingCCollision" type="StaticBody3D" parent="."]
+collision_layer = 0
+collision_mask = 0
 position = Vector3(-17, 4.5, 12)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BuildingCCollision"]
@@ -114,3 +190,173 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("2_controls")
+
+[node name="StreetRoadSurface" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.04, -8)
+mesh = SubResource("RoadMesh")
+material_override = SubResource("StreetAsphalt")
+
+[node name="StreetLaneDash01" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.10, -34)
+mesh = SubResource("StreetLaneDashMesh")
+material_override = SubResource("StreetYellow")
+[node name="StreetLaneDash02" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.10, -26)
+mesh = SubResource("StreetLaneDashMesh")
+material_override = SubResource("StreetYellow")
+[node name="StreetLaneDash03" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.10, -18)
+mesh = SubResource("StreetLaneDashMesh")
+material_override = SubResource("StreetYellow")
+[node name="StreetLaneDash04" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.10, -10)
+mesh = SubResource("StreetLaneDashMesh")
+material_override = SubResource("StreetYellow")
+[node name="StreetLaneDash05" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.10, -2)
+mesh = SubResource("StreetLaneDashMesh")
+material_override = SubResource("StreetYellow")
+[node name="StreetLaneDash06" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.10, 6)
+mesh = SubResource("StreetLaneDashMesh")
+material_override = SubResource("StreetYellow")
+
+[node name="LeftPavement" type="MeshInstance3D" parent="."]
+position = Vector3(-9.5, 0.12, -8)
+mesh = SubResource("StreetPavementMesh")
+material_override = SubResource("StreetConcrete")
+[node name="RightPavement" type="MeshInstance3D" parent="."]
+position = Vector3(9.5, 0.12, -8)
+mesh = SubResource("StreetPavementMesh")
+material_override = SubResource("StreetConcrete")
+
+[node name="Crosswalk01" type="MeshInstance3D" parent="."]
+position = Vector3(-5.0, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk02" type="MeshInstance3D" parent="."]
+position = Vector3(-3.6, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk03" type="MeshInstance3D" parent="."]
+position = Vector3(-2.2, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk04" type="MeshInstance3D" parent="."]
+position = Vector3(-0.8, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk05" type="MeshInstance3D" parent="."]
+position = Vector3(0.6, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk06" type="MeshInstance3D" parent="."]
+position = Vector3(2.0, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk07" type="MeshInstance3D" parent="."]
+position = Vector3(3.4, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+[node name="Crosswalk08" type="MeshInstance3D" parent="."]
+position = Vector3(4.8, 0.11, -1)
+mesh = SubResource("StreetCrosswalkMesh")
+material_override = SubResource("StreetWhite")
+
+[node name="IkejaStorefront" type="Node3D" parent="."]
+position = Vector3(-13, 3, -17)
+rotation_degrees = Vector3(0, -90, 0)
+[node name="BuildingBody" type="MeshInstance3D" parent="IkejaStorefront"]
+mesh = SubResource("StreetShopMesh")
+material_override = SubResource("StreetPlaster")
+[node name="FrontWindowLeft" type="MeshInstance3D" parent="IkejaStorefront"]
+position = Vector3(-2.65, -0.25, -2.58)
+mesh = SubResource("StreetWindowMesh")
+material_override = SubResource("StreetGlass")
+[node name="FrontWindowRight" type="MeshInstance3D" parent="IkejaStorefront"]
+position = Vector3(2.65, -0.25, -2.58)
+mesh = SubResource("StreetWindowMesh")
+material_override = SubResource("StreetGlass")
+[node name="ShopDoor" type="MeshInstance3D" parent="IkejaStorefront"]
+position = Vector3(0, -1.65, -2.58)
+mesh = SubResource("StreetDoorMesh")
+material_override = SubResource("StreetTeal")
+[node name="Awning" type="MeshInstance3D" parent="IkejaStorefront"]
+position = Vector3(0, 0.8, -3.05)
+mesh = SubResource("StreetAwningMesh")
+material_override = SubResource("StreetTerracotta")
+[node name="SignBacking" type="MeshInstance3D" parent="IkejaStorefront"]
+position = Vector3(0, 2.15, -2.62)
+mesh = SubResource("StreetWindowMesh")
+material_override = SubResource("StreetTeal")
+[node name="ShopSign" type="Label3D" parent="IkejaStorefront"]
+position = Vector3(0, 2.15, -2.51)
+text = "CORNER HOUSE"
+font_size = 54
+pixel_size = 0.006
+modulate = Color(0.98, 0.88, 0.62, 1)
+outline_size = 8
+outline_modulate = Color(0.03, 0.08, 0.08, 1)
+[node name="StoreCollision" type="StaticBody3D" parent="IkejaStorefront"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="IkejaStorefront/StoreCollision"]
+shape = SubResource("StreetShopCollision")
+
+[node name="IkejaBusStop" type="Node3D" parent="."]
+position = Vector3(12, 0.2, -3)
+[node name="ShelterRoof" type="MeshInstance3D" parent="IkejaBusStop"]
+position = Vector3(0, 2.25, 0)
+mesh = SubResource("StreetWindowMesh")
+scale = Vector3(1.8, 0.12, 1.4)
+material_override = SubResource("StreetTeal")
+[node name="PostLeft" type="MeshInstance3D" parent="IkejaBusStop"]
+position = Vector3(-1.55, 1.05, 0)
+mesh = SubResource("StreetDoorMesh")
+scale = Vector3(0.08, 0.85, 0.08)
+material_override = SubResource("StreetMetal")
+[node name="PostRight" type="MeshInstance3D" parent="IkejaBusStop"]
+position = Vector3(1.55, 1.05, 0)
+mesh = SubResource("StreetDoorMesh")
+scale = Vector3(0.08, 0.85, 0.08)
+material_override = SubResource("StreetMetal")
+[node name="Bench" type="MeshInstance3D" parent="IkejaBusStop"]
+position = Vector3(0, 0.55, -0.15)
+mesh = SubResource("StreetWindowMesh")
+scale = Vector3(0.85, 0.12, 0.5)
+material_override = SubResource("StreetTerracotta")
+[node name="BusStopLabel" type="Label3D" parent="IkejaBusStop"]
+position = Vector3(0, 1.65, -0.2)
+text = "IKEJA CORNER"
+font_size = 42
+pixel_size = 0.006
+modulate = Color(0.98, 0.94, 0.82, 1)
+outline_size = 6
+outline_modulate = Color(0.03, 0.08, 0.08, 1)
+
+[node name="StreetLamp" type="Node3D" parent="."]
+position = Vector3(5, 0, -18)
+[node name="Pole" type="MeshInstance3D" parent="StreetLamp"]
+position = Vector3(0, 3, 0)
+mesh = SubResource("StreetDoorMesh")
+scale = Vector3(0.07, 1.2, 0.07)
+material_override = SubResource("StreetMetal")
+[node name="Arm" type="MeshInstance3D" parent="StreetLamp"]
+position = Vector3(-0.45, 5.8, 0)
+mesh = SubResource("StreetWindowMesh")
+scale = Vector3(0.42, 0.06, 0.06)
+material_override = SubResource("StreetMetal")
+[node name="LampHead" type="MeshInstance3D" parent="StreetLamp"]
+position = Vector3(-0.85, 5.8, 0)
+mesh = SubResource("StreetWindowMesh")
+scale = Vector3(0.25, 0.08, 0.16)
+material_override = SubResource("StreetYellow")
+
+[node name="StreetPlanter" type="MeshInstance3D" parent="."]
+position = Vector3(-10.5, 0.55, -7)
+mesh = SubResource("StreetWindowMesh")
+scale = Vector3(0.9, 0.55, 0.85)
+material_override = SubResource("StreetTerracotta")
+[node name="StreetFoliage" type="MeshInstance3D" parent="."]
+position = Vector3(-10.5, 1.25, -7)
+mesh = SubResource("StreetWindowMesh")
+scale = Vector3(0.6, 0.75, 0.55)
+material_override = SubResource("StreetLeaf")
