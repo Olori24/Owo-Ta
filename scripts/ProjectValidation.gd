@@ -14,18 +14,37 @@ func _run_validation() -> void:
 		_fail("Could not load configured main scene: " + main_scene_path)
 		return
 
-	var main_instance := main_packed_scene.instantiate() as Node3D
-	if main_instance == null:
-		_fail("Configured main scene must instantiate a Node3D: " + main_scene_path)
+	if main_scene_path != "res://scenes/characters/character_selection.tscn":
+		_fail("Configured main scene must open the three-character selection screen: " + main_scene_path)
 		return
-
-	root.add_child(main_instance)
+	var entry_instance := main_packed_scene.instantiate() as CharacterSelection
+	if entry_instance == null:
+		_fail("Configured main scene must instantiate CharacterSelection: " + main_scene_path)
+		return
+	root.add_child(entry_instance)
 	await process_frame
-	if not _validate_gameplay_scene(main_instance):
+	if entry_instance.characters.size() != 3 or entry_instance.current_visual == null or not entry_instance.start_adventure_on_select:
+		_fail("Character selection entry scene must preview all three characters and enable adventure launch.")
+		return
+	entry_instance.queue_free()
+	await process_frame
+
+	const GAMEPLAY_SCENE_PATH := "res://scenes/world/first_district.tscn"
+	var gameplay_packed_scene := load(GAMEPLAY_SCENE_PATH) as PackedScene
+	if gameplay_packed_scene == null:
+		_fail("Could not load the first district gameplay scene.")
+		return
+	var gameplay_instance := gameplay_packed_scene.instantiate() as Node3D
+	if gameplay_instance == null:
+		_fail("First district must instantiate as Node3D.")
+		return
+	root.add_child(gameplay_instance)
+	await process_frame
+	if not _validate_gameplay_scene(gameplay_instance):
 		return
 
-	print("OWO TÀ configured main scene and 3D gameplay foundation validation passed: " + main_scene_path)
-	main_instance.queue_free()
+	print("OWO TÀ character selection entry and first-district gameplay validation passed.")
+	gameplay_instance.queue_free()
 	quit(0)
 
 func _validate_gameplay_scene(world: Node3D) -> bool:
@@ -39,9 +58,23 @@ func _validate_gameplay_scene(world: Node3D) -> bool:
 		if not player.has_method(required_method):
 			return _fail("Player controller is missing required behavior: " + required_method)
 
-	var body_mesh := player.get_node_or_null("Body") as MeshInstance3D
-	if body_mesh == null or body_mesh.mesh == null:
-		return _fail("Player body mesh is missing.")
+	var visual_body := player.get_node_or_null("Body") as Node3D
+	if visual_body == null:
+		return _fail("Player visual body root is missing.")
+	var character_visual := visual_body.get_node_or_null("CharacterVisual") as Node3D
+	if character_visual == null:
+		return _fail("Selected production character visual is missing from the playable player.")
+	var character_meshes: Array[MeshInstance3D] = []
+	var character_skeletons: Array[Skeleton3D] = []
+	var character_animations: Array[AnimationPlayer] = []
+	_collect_character_nodes(character_visual, character_meshes, character_skeletons, character_animations)
+	if character_meshes.is_empty() or character_skeletons.is_empty():
+		return _fail("Playable character must contain a visible skinned mesh and Skeleton3D.")
+	if character_animations.is_empty():
+		return _fail("Playable character must contain an AnimationPlayer.")
+	for clip in ["idle", "walk", "run", "jump", "landing"]:
+		if not character_animations[0].has_animation(clip):
+			return _fail("Playable character is missing required animation: " + clip)
 	var player_collision := player.get_node_or_null("CollisionShape3D") as CollisionShape3D
 	if player_collision == null or player_collision.shape == null:
 		return _fail("Player collision shape is missing.")
@@ -93,7 +126,7 @@ func _validate_gameplay_scene(world: Node3D) -> bool:
 	var controls_layer := world.get_node_or_null("MobileControls") as CanvasLayer
 	var touch_overlay := world.get_node_or_null("MobileControls/TouchOverlay") as Control
 	if controls_layer == null or touch_overlay == null:
-		return _fail("Mobile controls layer and touch overlay are required in the configured main scene.")
+		return _fail("Mobile controls layer and touch overlay are required in the first district scene.")
 	if not touch_overlay.has_method("_input") or not touch_overlay.has_method("_release_all_controls"):
 		return _fail("Touch overlay is missing its input and release handlers.")
 	return true
@@ -102,3 +135,13 @@ func _fail(message: String) -> bool:
 	push_error("OWO TÀ validation failed: " + message)
 	quit(1)
 	return false
+
+func _collect_character_nodes(node: Node, meshes: Array[MeshInstance3D], skeletons: Array[Skeleton3D], animations: Array[AnimationPlayer]) -> void:
+	if node is MeshInstance3D and (node as MeshInstance3D).mesh != null:
+		meshes.append(node as MeshInstance3D)
+	if node is Skeleton3D:
+		skeletons.append(node as Skeleton3D)
+	if node is AnimationPlayer:
+		animations.append(node as AnimationPlayer)
+	for child in node.get_children():
+		_collect_character_nodes(child, meshes, skeletons, animations)

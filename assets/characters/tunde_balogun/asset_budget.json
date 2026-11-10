@@ -1,0 +1,57 @@
+{
+  "character_id": "tunde_balogun",
+  "display_name": "Tunde Balogun",
+  "identity": {
+    "gender_presentation": "male",
+    "role": "Community radio field producer",
+    "bio": "A Lagos-based community radio field producer who is quick-witted, observant and generous with new artists. One fictional individual, not a general representation of Nigerians."
+  },
+  "expressive_action": "radio_check",
+  "classification": "project guardrails and measured targets; not platform hard limits or device performance claims",
+  "toolchain": {
+    "asset_authoring": "Blender 4.0.2",
+    "runtime_import_validation": "Godot 4.3 stable",
+    "generation_script": "assets/characters/tunde_balogun/build_tunde_balogun.py"
+  },
+  "limits": {
+    "glb_bytes_max": 10485760,
+    "triangles_max": 30000,
+    "material_surfaces_max": 5,
+    "texture_files_max": 4,
+    "texture_dimension_max": 2048,
+    "texture_total_bytes_max": 2097152,
+    "deforming_bones_max": 65,
+    "vertex_influences_max": 4,
+    "animation_clips_min": 8,
+    "animation_clips_max": 8
+  },
+  "measured_export": {
+    "glb_bytes": 1587280,
+    "glb_sha256": "83fe968fbecbcb58cb02f0b5dc0cd0028af930a50a423af06b2d9298663056e5",
+    "editable_blend_bytes": 3684904,
+    "vertices": 15874,
+    "triangles": 16688,
+    "material_surfaces": 4,
+    "materials": 4,
+    "embedded_images": 4,
+    "source_texture_bytes": 245211,
+    "skeleton_joints": 22,
+    "animation_clip_count": 8
+  },
+  "required_animation_clips": [
+    "idle",
+    "walk",
+    "run",
+    "jump",
+    "landing",
+    "turn",
+    "stop",
+    "radio_check"
+  ],
+  "notes": [
+    "Limits are project estimates informed by the existing character asset budget; they are not Android hardware guarantees.",
+    "Confirm imported memory, frame time, thermal behavior and art quality on representative mid-range Android devices before release.",
+    "The four authored base-colour images are embedded in the GLB; metallic and roughness are set in the PBR materials.",
+    "Measured output values and GLB SHA-256 are validated by AdditionalCharacterRosterValidation.gd and Blender rebuild checks."
+  ]
+}

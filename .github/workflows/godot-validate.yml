@@ -41,7 +41,41 @@ jobs:
       - name: Run gameplay behavior tests
         run: ./.tools/godot --headless --path . --script res://scripts/tests/GameplayFoundationTests.gd
 
+      - name: Install software Vulkan and virtual-display prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends xvfb mesa-vulkan-drivers
+          command -v xvfb-run
+          find /usr/share/vulkan/icd.d -maxdepth 1 -type f -iname 'lvp_icd*.json' -print -quit | grep -q .
+
+      - name: Render the configured district with Godot Forward Mobile
+        env:
+          OWO_RENDERED_SCENE_OUTPUT: ${{ github.workspace }}/build/verification/kemi-first-district.png
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          VULKAN_ICD="$(find /usr/share/vulkan/icd.d -maxdepth 1 -type f -iname 'lvp_icd*.json' -print -quit)"
+          mkdir -p "$(dirname "$OWO_RENDERED_SCENE_OUTPUT")" "$RUNNER_TEMP/godot-runtime"
+          chmod 700 "$RUNNER_TEMP/godot-runtime"
+          xvfb-run -a -s "-screen 0 640x1024x24" env \
+            XDG_RUNTIME_DIR="$RUNNER_TEMP/godot-runtime" \
+            VK_ICD_FILENAMES="$VULKAN_ICD" \
+            LIBGL_ALWAYS_SOFTWARE="$LIBGL_ALWAYS_SOFTWARE" \
+            OWO_RENDERED_SCENE_OUTPUT="$OWO_RENDERED_SCENE_OUTPUT" \
+            ./.tools/godot --path . --rendering-method mobile --rendering-driver vulkan \
+              --windowed --resolution 540x960 --position 0,0 \
+              --script res://scripts/tests/KemiRenderedSceneValidation.gd
+
+      - name: Upload rendered Kemi district evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: kemi-first-district-render
+          path: build/verification/kemi-first-district.png
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Validate original character asset and selection scene
         env:
           OWO_REQUIRE_IMPORTED_CHARACTER_SCENE: "1"
         run: ./.tools/godot --headless --path . --script res://scripts/tests/CharacterPipelineValidation.gd
+      - name: Validate Phase 003B roster, character assets and animations
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/AdditionalCharacterRosterValidation.gd

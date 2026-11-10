@@ -4,6 +4,7 @@ class_name CharacterSelection
 signal character_selected(definition: CharacterDefinition)
 
 @export var characters: Array[CharacterDefinition] = []
+@export var start_adventure_on_select: bool = true
 
 @onready var orbit_pivot: Node3D = $OrbitPivot
 @onready var camera: Camera3D = $OrbitPivot/Camera3D
@@ -53,6 +54,9 @@ func show_character(index: int) -> void:
 		instance.free()
 		return
 	current_visual = instance as Node3D
+	var preview_player := _find_animation_player(current_visual)
+	if preview_player != null:
+		preview_player.autoplay = ""
 	model_anchor.add_child(current_visual)
 	current_visual.name = "SelectedCharacterVisual"
 	name_label.text = current_definition.display_name
@@ -76,6 +80,7 @@ func _play_idle_if_available() -> void:
 		return
 	var clip := String(current_definition.idle_clip)
 	if player.has_animation(clip):
+		player.stop()
 		player.play(clip)
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
@@ -94,7 +99,16 @@ func _select_current() -> void:
 	if current_definition == null:
 		return
 	status_label.text = "%s selected" % current_definition.display_name
+	var game_session := get_node_or_null("/root/GameSession")
+	if game_session == null:
+		push_error("GameSession autoload is unavailable; cannot launch the selected character.")
+		return
+	game_session.call("set_selected_character", current_definition)
 	character_selected.emit(current_definition)
+	if start_adventure_on_select:
+		var change_error := get_tree().change_scene_to_file("res://scenes/world/first_district.tscn")
+		if change_error != OK:
+			push_error("Could not enter the first district: " + str(change_error))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
