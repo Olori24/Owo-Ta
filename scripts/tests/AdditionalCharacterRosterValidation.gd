@@ -243,6 +243,7 @@ func _exercise_selection(definitions: Array[CharacterDefinition]) -> void:
 	_check(selector != null, "Existing selection controller instantiates")
 	if selector == null:
 		return
+	selector.start_adventure_on_select = false
 	var scene_roster_ids: Array[StringName] = []
 	for scene_definition in selector.characters:
 		scene_roster_ids.append(scene_definition.character_id)
@@ -264,8 +265,38 @@ func _exercise_selection(definitions: Array[CharacterDefinition]) -> void:
 		_check(not selector.previous_button.disabled and not selector.next_button.disabled, "Three-character roster enables navigation")
 		selector._select_current()
 		_check(not selected_ids.is_empty() and selected_ids.back() == expected.character_id, "Selector emits selected definition " + String(expected.character_id))
+		_check(GameSession.get_selected_character() == expected, "Game session stores selected definition " + String(expected.character_id))
 	selector.free()
 	await process_frame
+	await _exercise_playable_visuals(definitions)
+
+func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void:
+	var player_scene := load("res://scenes/characters/player.tscn") as PackedScene
+	_check(player_scene != null, "Playable player scene loads for roster integration")
+	if player_scene == null:
+		return
+	for definition in definitions:
+		GameSession.set_selected_character(definition)
+		var player := player_scene.instantiate() as CharacterBody3D
+		_check(player != null, "Player scene instantiates for " + String(definition.character_id))
+		if player == null:
+			continue
+		root.add_child(player)
+		await process_frame
+		var visual := player.get_node_or_null("Body/CharacterVisual") as Node3D
+		_check(visual != null, "Player mounts selected visual " + String(definition.character_id))
+		if visual != null:
+			_check(visual.scene_file_path == definition.visual_scene.resource_path, "Player mounts the correct GLB scene for " + String(definition.character_id))
+			var animation_players := _collect_animation_players(visual)
+			_check(not animation_players.is_empty(), "Selected visual exposes AnimationPlayer for " + String(definition.character_id))
+			if not animation_players.is_empty():
+				var animation_player := animation_players[0]
+				for clip in [String(definition.idle_clip), String(definition.walk_clip), String(definition.run_clip), String(definition.jump_clip), String(definition.landing_clip)]:
+					_check(animation_player.has_animation(clip), "Selected visual exposes " + clip + " for " + String(definition.character_id))
+				_check(String(animation_player.current_animation) == String(definition.idle_clip), "Selected visual starts in idle for " + String(definition.character_id))
+		player.queue_free()
+		await process_frame
+	GameSession.clear_selected_character()
 
 func _pose_signature(skeleton: Skeleton3D) -> String:
 	var values := PackedFloat32Array()

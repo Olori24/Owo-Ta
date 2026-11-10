@@ -7,12 +7,13 @@ func _initialize() -> void:
 
 func _run_tests() -> void:
 	var main_scene_path := str(ProjectSettings.get_setting("application/run/main_scene", ""))
-	if main_scene_path.is_empty():
-		_fail("The configured main scene path is empty.")
+	if main_scene_path != "res://scenes/characters/character_selection.tscn":
+		_fail("The configured entry scene must be the character selector.")
 		return
-	var packed_scene := load(main_scene_path) as PackedScene
+	const GAMEPLAY_SCENE_PATH := "res://scenes/world/first_district.tscn"
+	var packed_scene := load(GAMEPLAY_SCENE_PATH) as PackedScene
 	if packed_scene == null:
-		_fail("The configured main scene could not be loaded: " + main_scene_path)
+		_fail("The first district gameplay scene could not be loaded.")
 		return
 	var world := packed_scene.instantiate() as Node3D
 	if world == null:
