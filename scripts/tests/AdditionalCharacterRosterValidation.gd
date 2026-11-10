@@ -298,7 +298,7 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 			var animation_players := _collect_animation_players(visual)
 			_check(not animation_players.is_empty(), "Selected visual exposes AnimationPlayer for " + String(definition.character_id))
 			if not animation_players.is_empty():
-				var animation_player := player.get_character_animation_player() as AnimationPlayer
+				var animation_player := player.call("get_character_animation_player") as AnimationPlayer
 				_check(animation_player != null and animation_players.has(animation_player), "Player controller owns an AnimationPlayer inside " + String(definition.character_id))
 				if animation_player != null:
 					for clip in [String(definition.idle_clip), String(definition.walk_clip), String(definition.run_clip), String(definition.jump_clip), String(definition.landing_clip)]:
