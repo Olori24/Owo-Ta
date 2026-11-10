@@ -35,6 +35,8 @@ jobs:
           "$RUNNER_TEMP/blender/blender" --version | head -n 1 | grep -F "Blender 4.0.2"
 
       - name: Regenerate Amara and Tunde from editable sources
+        env:
+          OWO_TA_SKIP_PREVIEW_RENDER: "1"
         run: |
           "$RUNNER_TEMP/blender/blender" --background --python assets/characters/amara_okonkwo/build_amara_okonkwo.py
           "$RUNNER_TEMP/blender/blender" --background --python assets/characters/tunde_balogun/build_tunde_balogun.py
