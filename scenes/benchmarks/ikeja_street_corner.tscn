@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
@@ -71,6 +71,9 @@ size = Vector3(2.1, 1.65, 0.12)
 
 [sub_resource type="BoxMesh" id="DoorMesh"]
 size = Vector3(1.25, 2.55, 0.18)
+
+[sub_resource type="BoxMesh" id="AwningMesh"]
+size = Vector3(10, 0.28, 1.5)
 
 [sub_resource type="BoxShape3D" id="GroundShape"]
 size = Vector3(34, 0.5, 54)
@@ -146,7 +149,7 @@ material_override = SubResource("Teal")
 
 [node name="Awning" type="MeshInstance3D" parent="Storefront"]
 position = Vector3(0, 0.8, -3.05)
-mesh = SubResource("PavementMesh")
+mesh = SubResource("AwningMesh")
 material_override = SubResource("Terracotta")
 
 [node name="SignBacking" type="MeshInstance3D" parent="Storefront"]
