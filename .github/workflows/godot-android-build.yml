@@ -6,9 +6,11 @@ on:
     branches:
       - main
       - feature/phase-003-character-pipeline
+      - feature/phase-1-visual-benchmark
   push:
     branches:
       - main
+      - 'feature/phase-1-*'
 
 permissions:
   contents: read

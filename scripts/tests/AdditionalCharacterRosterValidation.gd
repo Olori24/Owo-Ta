@@ -289,8 +289,9 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 		if player == null:
 			continue
 		root.add_child(player)
-		await process_frame
-		await physics_frame
+		# Inspect the controller's synchronous startup state before the first physics
+		# tick. This fixture intentionally has no world floor, so allowing physics to
+		# advance first turns the expected idle startup into a gravity-driven jump.
 		var visual := player.get_node_or_null("Body/CharacterVisual") as Node3D
 		_check(visual != null, "Player mounts selected visual " + String(definition.character_id))
 		if visual != null:
