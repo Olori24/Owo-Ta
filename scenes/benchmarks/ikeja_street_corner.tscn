@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
@@ -75,6 +75,12 @@ size = Vector3(1.25, 2.55, 0.18)
 [sub_resource type="BoxMesh" id="AwningMesh"]
 size = Vector3(10, 0.28, 1.5)
 
+[sub_resource type="BoxMesh" id="LaneDashMesh"]
+size = Vector3(0.18, 0.04, 2.2)
+
+[sub_resource type="BoxMesh" id="CrosswalkStripeMesh"]
+size = Vector3(0.72, 0.05, 1.8)
+
 [sub_resource type="BoxShape3D" id="GroundShape"]
 size = Vector3(34, 0.5, 54)
 
@@ -115,6 +121,71 @@ position = Vector3(5.5, 0.04, -1)
 mesh = SubResource("RoadMesh")
 material_override = SubResource("Asphalt")
 
+[node name="LaneDash01" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, -17)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash02" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, -9)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash03" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, -1)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash04" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, 7)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash05" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, 15)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="Crosswalk01" type="MeshInstance3D" parent="."]
+position = Vector3(0.7, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk02" type="MeshInstance3D" parent="."]
+position = Vector3(2.1, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk03" type="MeshInstance3D" parent="."]
+position = Vector3(3.5, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk04" type="MeshInstance3D" parent="."]
+position = Vector3(4.9, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk05" type="MeshInstance3D" parent="."]
+position = Vector3(6.3, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk06" type="MeshInstance3D" parent="."]
+position = Vector3(7.7, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk07" type="MeshInstance3D" parent="."]
+position = Vector3(9.1, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk08" type="MeshInstance3D" parent="."]
+position = Vector3(10.5, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
 [node name="LeftPavement" type="MeshInstance3D" parent="."]
 position = Vector3(-9.5, 0.12, -1)
 mesh = SubResource("PavementMesh")
@@ -126,7 +197,7 @@ mesh = SubResource("PavementMesh")
 material_override = SubResource("Pavement")
 
 [node name="Storefront" type="Node3D" parent="."]
-position = Vector3(-9.5, 3.0, -7.0)
+position = Vector3(-6.5, 3.0, -8.5)
 
 [node name="BuildingBody" type="MeshInstance3D" parent="Storefront"]
 mesh = SubResource("StoreMesh")
@@ -174,7 +245,7 @@ position = Vector3(0, 0, 0)
 shape = SubResource("StoreCollisionShape")
 
 [node name="BusStop" type="Node3D" parent="."]
-position = Vector3(-11.5, 0.2, 5.5)
+position = Vector3(-7.5, 0.2, 4.5)
 
 [node name="ShelterRoof" type="MeshInstance3D" parent="BusStop"]
 position = Vector3(0, 2.25, 0)
@@ -231,19 +302,19 @@ scale = Vector3(0.25, 0.08, 0.16)
 material_override = SubResource("Yellow")
 
 [node name="PlanterLeft" type="MeshInstance3D" parent="."]
-position = Vector3(-14, 0.55, -1)
+position = Vector3(-11.5, 0.55, -1)
 mesh = SubResource("WindowMesh")
 scale = Vector3(0.9, 0.55, 0.85)
 material_override = SubResource("Terracotta")
 
 [node name="PlanterFoliageLeft" type="MeshInstance3D" parent="."]
-position = Vector3(-14, 1.25, -1)
+position = Vector3(-11.5, 1.25, -1)
 mesh = SubResource("WindowMesh")
 scale = Vector3(0.6, 0.75, 0.55)
 material_override = SubResource("Leaf")
 
 [node name="StoryPoint" type="Area3D" parent="."]
-position = Vector3(-5.0, 0.8, -1.0)
+position = Vector3(-3.5, 0.8, -1.0)
 [node name="Marker" type="MeshInstance3D" parent="StoryPoint"]
 mesh = SubResource("WindowMesh")
 scale = Vector3(0.22, 0.22, 0.22)
