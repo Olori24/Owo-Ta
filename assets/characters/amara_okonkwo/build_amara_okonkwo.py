@@ -563,7 +563,7 @@ scene.unit_settings.scale_length = 1.0
 scene.render.image_settings.color_mode = "RGBA"
 scene.view_settings.view_transform = "Standard"
 scene.frame_start = 1
-scene.frame_end = 30
+scene.frame_end = 48
 scene.frame_set(24)
 arm.animation_data_create()
 arm.animation_data.action = bpy.data.actions["idle"]
