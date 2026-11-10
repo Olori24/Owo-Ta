@@ -198,6 +198,7 @@ material_override = SubResource("Pavement")
 
 [node name="Storefront" type="Node3D" parent="."]
 position = Vector3(-6.5, 3.0, -8.5)
+rotation_degrees = Vector3(0, -90, 0)
 
 [node name="BuildingBody" type="MeshInstance3D" parent="Storefront"]
 mesh = SubResource("StoreMesh")
