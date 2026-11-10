@@ -1,0 +1,370 @@
+[gd_scene load_steps=26 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
+
+[sub_resource type="Environment" id="WorldEnvironment"]
+background_mode = 1
+background_color = Color(0.52, 0.68, 0.78, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.82, 0.86, 0.9, 1)
+ambient_light_energy = 0.72
+tonemap_mode = 2
+glow_enabled = false
+
+[sub_resource type="StandardMaterial3D" id="Asphalt"]
+albedo_color = Color(0.12, 0.14, 0.16, 1)
+roughness = 0.96
+
+[sub_resource type="StandardMaterial3D" id="Pavement"]
+albedo_color = Color(0.48, 0.48, 0.44, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="Plaster"]
+albedo_color = Color(0.78, 0.68, 0.52, 1)
+roughness = 0.88
+
+[sub_resource type="StandardMaterial3D" id="Terracotta"]
+albedo_color = Color(0.62, 0.29, 0.18, 1)
+roughness = 0.86
+
+[sub_resource type="StandardMaterial3D" id="Teal"]
+albedo_color = Color(0.035, 0.32, 0.3, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Metal"]
+albedo_color = Color(0.12, 0.15, 0.17, 1)
+metallic = 0.55
+roughness = 0.48
+
+[sub_resource type="StandardMaterial3D" id="Glass"]
+albedo_color = Color(0.22, 0.43, 0.49, 1)
+metallic = 0.12
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="Yellow"]
+albedo_color = Color(0.96, 0.68, 0.12, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="White"]
+albedo_color = Color(0.88, 0.87, 0.8, 1)
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="Leaf"]
+albedo_color = Color(0.12, 0.3, 0.17, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="GroundMesh"]
+size = Vector3(34, 0.5, 54)
+
+[sub_resource type="BoxMesh" id="RoadMesh"]
+size = Vector3(11, 0.08, 52)
+
+[sub_resource type="BoxMesh" id="PavementMesh"]
+size = Vector3(7, 0.24, 52)
+
+[sub_resource type="BoxMesh" id="StoreMesh"]
+size = Vector3(10, 6, 5)
+
+[sub_resource type="BoxMesh" id="WindowMesh"]
+size = Vector3(2.1, 1.65, 0.12)
+
+[sub_resource type="BoxMesh" id="DoorMesh"]
+size = Vector3(1.25, 2.55, 0.18)
+
+[sub_resource type="BoxMesh" id="AwningMesh"]
+size = Vector3(10, 0.28, 1.5)
+
+[sub_resource type="BoxMesh" id="LaneDashMesh"]
+size = Vector3(0.18, 0.04, 2.2)
+
+[sub_resource type="BoxMesh" id="CrosswalkStripeMesh"]
+size = Vector3(0.72, 0.05, 1.8)
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(34, 0.5, 54)
+
+[sub_resource type="BoxShape3D" id="StoreCollisionShape"]
+size = Vector3(10, 6, 5)
+
+[sub_resource type="BoxShape3D" id="StoryPointShape"]
+size = Vector3(3, 2, 3)
+
+[node name="LagosStreetCornerBenchmark" type="Node3D" groups=["benchmark_scene"]]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("WorldEnvironment")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -32, 0)
+light_color = Color(1, 0.91, 0.78, 1)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="SkyFill" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-18, 145, 0)
+light_color = Color(0.7, 0.82, 0.95, 1)
+light_energy = 0.38
+
+[node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.25, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("GroundMesh")
+material_override = SubResource("Asphalt")
+
+[node name="Collision" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("GroundShape")
+
+[node name="RoadSurface" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.04, -1)
+mesh = SubResource("RoadMesh")
+material_override = SubResource("Asphalt")
+
+[node name="LaneDash01" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, -17)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash02" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, -9)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash03" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, -1)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash04" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, 7)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="LaneDash05" type="MeshInstance3D" parent="."]
+position = Vector3(5.5, 0.10, 15)
+mesh = SubResource("LaneDashMesh")
+material_override = SubResource("Yellow")
+
+[node name="Crosswalk01" type="MeshInstance3D" parent="."]
+position = Vector3(0.7, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk02" type="MeshInstance3D" parent="."]
+position = Vector3(2.1, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk03" type="MeshInstance3D" parent="."]
+position = Vector3(3.5, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk04" type="MeshInstance3D" parent="."]
+position = Vector3(4.9, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk05" type="MeshInstance3D" parent="."]
+position = Vector3(6.3, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk06" type="MeshInstance3D" parent="."]
+position = Vector3(7.7, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk07" type="MeshInstance3D" parent="."]
+position = Vector3(9.1, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="Crosswalk08" type="MeshInstance3D" parent="."]
+position = Vector3(10.5, 0.11, 13.5)
+mesh = SubResource("CrosswalkStripeMesh")
+material_override = SubResource("White")
+
+[node name="LeftPavement" type="MeshInstance3D" parent="."]
+position = Vector3(-9.5, 0.12, -1)
+mesh = SubResource("PavementMesh")
+material_override = SubResource("Pavement")
+
+[node name="RightPavement" type="MeshInstance3D" parent="."]
+position = Vector3(13.5, 0.12, -1)
+mesh = SubResource("PavementMesh")
+material_override = SubResource("Pavement")
+
+[node name="Storefront" type="Node3D" parent="."]
+position = Vector3(-6.5, 3.0, -8.5)
+rotation_degrees = Vector3(0, -90, 0)
+
+[node name="BuildingBody" type="MeshInstance3D" parent="Storefront"]
+mesh = SubResource("StoreMesh")
+material_override = SubResource("Plaster")
+
+[node name="FrontWindowLeft" type="MeshInstance3D" parent="Storefront"]
+position = Vector3(-2.65, -0.25, -2.58)
+mesh = SubResource("WindowMesh")
+material_override = SubResource("Glass")
+
+[node name="FrontWindowRight" type="MeshInstance3D" parent="Storefront"]
+position = Vector3(2.65, -0.25, -2.58)
+mesh = SubResource("WindowMesh")
+material_override = SubResource("Glass")
+
+[node name="ShopDoor" type="MeshInstance3D" parent="Storefront"]
+position = Vector3(0, -1.65, -2.58)
+mesh = SubResource("DoorMesh")
+material_override = SubResource("Teal")
+
+[node name="Awning" type="MeshInstance3D" parent="Storefront"]
+position = Vector3(0, 0.8, -3.05)
+mesh = SubResource("AwningMesh")
+material_override = SubResource("Terracotta")
+
+[node name="SignBacking" type="MeshInstance3D" parent="Storefront"]
+position = Vector3(0, 2.15, -2.62)
+mesh = SubResource("WindowMesh")
+material_override = SubResource("Teal")
+
+[node name="FictionalShopSign" type="Label3D" parent="Storefront"]
+position = Vector3(0, 2.15, -2.51)
+text = "CORNER HOUSE"
+font_size = 54
+pixel_size = 0.006
+modulate = Color(0.98, 0.88, 0.62, 1)
+outline_size = 8
+outline_modulate = Color(0.03, 0.08, 0.08, 1)
+billboard = 0
+
+[node name="StoreCollision" type="StaticBody3D" parent="Storefront"]
+position = Vector3(0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Storefront/StoreCollision"]
+shape = SubResource("StoreCollisionShape")
+
+[node name="BusStop" type="Node3D" parent="."]
+position = Vector3(-7.5, 0.2, 4.5)
+
+[node name="ShelterRoof" type="MeshInstance3D" parent="BusStop"]
+position = Vector3(0, 2.25, 0)
+mesh = SubResource("WindowMesh")
+scale = Vector3(1.8, 0.12, 1.4)
+material_override = SubResource("Teal")
+
+[node name="PostLeft" type="MeshInstance3D" parent="BusStop"]
+position = Vector3(-1.55, 1.05, 0)
+mesh = SubResource("DoorMesh")
+scale = Vector3(0.08, 0.85, 0.08)
+material_override = SubResource("Metal")
+
+[node name="PostRight" type="MeshInstance3D" parent="BusStop"]
+position = Vector3(1.55, 1.05, 0)
+mesh = SubResource("DoorMesh")
+scale = Vector3(0.08, 0.85, 0.08)
+material_override = SubResource("Metal")
+
+[node name="Bench" type="MeshInstance3D" parent="BusStop"]
+position = Vector3(0, 0.55, -0.15)
+mesh = SubResource("WindowMesh")
+scale = Vector3(0.85, 0.12, 0.5)
+material_override = SubResource("Terracotta")
+
+[node name="BusStopLabel" type="Label3D" parent="BusStop"]
+position = Vector3(0, 1.65, -0.2)
+text = "IKEJA CORNER"
+font_size = 42
+pixel_size = 0.006
+modulate = Color(0.98, 0.94, 0.82, 1)
+outline_size = 6
+outline_modulate = Color(0.03, 0.08, 0.08, 1)
+
+[node name="StreetLamp" type="Node3D" parent="."]
+position = Vector3(1.5, 0, -12)
+
+[node name="Pole" type="MeshInstance3D" parent="StreetLamp"]
+position = Vector3(0, 3, 0)
+mesh = SubResource("DoorMesh")
+scale = Vector3(0.07, 1.2, 0.07)
+material_override = SubResource("Metal")
+
+[node name="Arm" type="MeshInstance3D" parent="StreetLamp"]
+position = Vector3(-0.45, 5.8, 0)
+mesh = SubResource("WindowMesh")
+scale = Vector3(0.42, 0.06, 0.06)
+material_override = SubResource("Metal")
+
+[node name="LampHead" type="MeshInstance3D" parent="StreetLamp"]
+position = Vector3(-0.85, 5.8, 0)
+mesh = SubResource("WindowMesh")
+scale = Vector3(0.25, 0.08, 0.16)
+material_override = SubResource("Yellow")
+
+[node name="PlanterLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-11.5, 0.55, -1)
+mesh = SubResource("WindowMesh")
+scale = Vector3(0.9, 0.55, 0.85)
+material_override = SubResource("Terracotta")
+
+[node name="PlanterFoliageLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-11.5, 1.25, -1)
+mesh = SubResource("WindowMesh")
+scale = Vector3(0.6, 0.75, 0.55)
+material_override = SubResource("Leaf")
+
+[node name="StoryPoint" type="Area3D" parent="."]
+position = Vector3(-3.5, 0.8, -1.0)
+[node name="Marker" type="MeshInstance3D" parent="StoryPoint"]
+mesh = SubResource("WindowMesh")
+scale = Vector3(0.22, 0.22, 0.22)
+material_override = SubResource("Yellow")
+[node name="Prompt" type="Label3D" parent="StoryPoint"]
+position = Vector3(0, 1.25, 0)
+text = "STORY POINT"
+font_size = 38
+pixel_size = 0.006
+modulate = Color(1, 0.92, 0.65, 1)
+outline_size = 6
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StoryPoint"]
+shape = SubResource("StoryPointShape")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector3(3.5, 0.12, 10)
+
+[node name="MobileControls" type="CanvasLayer" parent="."]
+[node name="TouchOverlay" type="Control" parent="MobileControls"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("2_controls")
+
+[node name="BenchmarkHUD" type="CanvasLayer" parent="."]
+layer = 10
+[node name="Title" type="Label" parent="BenchmarkHUD"]
+offset_left = 22.0
+offset_top = 20.0
+offset_right = 650.0
+offset_bottom = 64.0
+text = "OWO TÀ  •  IKEJA CORNER BENCHMARK  •  KEMI"
+theme_override_colors/font_color = Color(0.98, 0.96, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.03, 0.06, 0.08, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
+mouse_filter = 2
+[node name="ControlsHint" type="Label" parent="BenchmarkHUD"]
+offset_left = 22.0
+offset_top = 68.0
+offset_right = 650.0
+offset_bottom = 102.0
+text = "Move: left stick / WASD     Look: right drag     Jump: button / Space"
+theme_override_colors/font_color = Color(0.95, 0.95, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0.03, 0.06, 0.08, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2

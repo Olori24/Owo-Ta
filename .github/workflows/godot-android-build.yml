@@ -6,12 +6,19 @@ on:
     branches:
       - main
       - feature/phase-003-character-pipeline
+      - feature/phase-1-visual-benchmark
   push:
     branches:
       - main
+      - 'feature/phase-1-*'
 
 permissions:
   contents: read
+
+# Serialize debug exports so the first run can seed the persistent debug keystore cache.
+concurrency:
+  group: owo-ta-android-debug-signing-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   android-export:
@@ -20,6 +27,32 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      # DEBUG-ONLY key. Pull-request jobs cannot restore this cache; never use for release signing.
+      - name: Restore persistent debug signing key
+        if: github.event_name != 'pull_request'
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/owo-ta-debug-signing
+          key: owo-ta-debug-signing-v1
+
+      - name: Create debug signing key when cache is empty
+        run: |
+          mkdir -p "$RUNNER_TEMP/owo-ta-debug-signing"
+          if [ ! -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" \
+              -storepass android -keypass android \
+              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=OWO TA Debug,O=Olori24,C=NG"
+          fi
+          test -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore"
+
+      - name: Verify persistent debug keystore exists
+        run: |
+          test -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore"
+          keytool -list -v -keystore "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" \
+            -storepass android -alias androiddebugkey | grep -E 'Alias name:|SHA256:'
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -57,6 +90,9 @@ jobs:
         env:
           ANDROID_HOME: ${{ runner.temp }}/android-sdk
           ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.temp }}/owo-ta-debug-signing/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
           mkdir -p build/android
           ./.tools/godot --headless --path . --export-debug "Android Debug APK" build/android/owo_ta-debug.apk
@@ -66,9 +102,12 @@ jobs:
           test -s build/android/owo_ta-debug.apk
           unzip -t build/android/owo_ta-debug.apk
 
-      - name: Verify APK signature
+      - name: Verify APK signature matches persistent debug key
         run: |
-          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs build/android/owo_ta-debug.apk
+          EXPECTED="$(keytool -list -v -keystore "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" -storepass android -alias androiddebugkey | awk -F': ' '/SHA256:/{print $2; exit}' | tr -d ':' | tr '[:upper:]' '[:lower:]')"
+          ACTUAL="$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs build/android/owo_ta-debug.apk | awk -F': ' '/certificate SHA-256 digest:/{print $2; exit}')"
+          test -n "$EXPECTED" && test -n "$ACTUAL" && test "$EXPECTED" = "$ACTUAL"
+          echo "APK signer matches the persistent debug keystore: $ACTUAL"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

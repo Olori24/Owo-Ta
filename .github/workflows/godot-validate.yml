@@ -18,7 +18,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-22.04
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
@@ -72,6 +72,64 @@ jobs:
           path: build/verification/kemi-first-district.png
           if-no-files-found: error
           retention-days: 14
+
+      - name: Render Ikeja street-corner benchmark
+        env:
+          OWO_IKEJA_BENCHMARK_RENDER_OUTPUT: ${{ github.workspace }}/build/verification/ikeja-street-corner.png
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          VULKAN_ICD="$(find /usr/share/vulkan/icd.d -maxdepth 1 -type f -iname 'lvp_icd*.json' -print -quit)"
+          mkdir -p "$(dirname "$OWO_IKEJA_BENCHMARK_RENDER_OUTPUT")" "$RUNNER_TEMP/godot-runtime"
+          chmod 700 "$RUNNER_TEMP/godot-runtime"
+          xvfb-run -a -s "-screen 0 1280x720x24" env \
+            XDG_RUNTIME_DIR="$RUNNER_TEMP/godot-runtime" \
+            VK_ICD_FILENAMES="$VULKAN_ICD" \
+            LIBGL_ALWAYS_SOFTWARE="$LIBGL_ALWAYS_SOFTWARE" \
+            OWO_IKEJA_BENCHMARK_RENDER_OUTPUT="$OWO_IKEJA_BENCHMARK_RENDER_OUTPUT" \
+            ./.tools/godot --path . --rendering-method mobile --rendering-driver vulkan \
+              --windowed --resolution 1280x720 --position 0,0 \
+              --script res://scripts/tests/IkejaStreetCornerBenchmarkRender.gd
+
+      - name: Upload Ikeja street-corner render
+        uses: actions/upload-artifact@v4
+        with:
+          name: owo-ta-ikeja-street-corner-benchmark
+          path: build/verification/ikeja-street-corner.png
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Render character roster visual benchmark
+        env:
+          OWO_CHARACTER_BENCHMARK_OUTPUT: ${{ github.workspace }}/build/verification/character-roster
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          VULKAN_ICD="$(find /usr/share/vulkan/icd.d -maxdepth 1 -type f -iname 'lvp_icd*.json' -print -quit)"
+          mkdir -p "$OWO_CHARACTER_BENCHMARK_OUTPUT" "$RUNNER_TEMP/godot-runtime"
+          chmod 700 "$RUNNER_TEMP/godot-runtime"
+          xvfb-run -a -s "-screen 0 1280x720x24" env \
+            XDG_RUNTIME_DIR="$RUNNER_TEMP/godot-runtime" \
+            VK_ICD_FILENAMES="$VULKAN_ICD" \
+            LIBGL_ALWAYS_SOFTWARE="$LIBGL_ALWAYS_SOFTWARE" \
+            OWO_CHARACTER_BENCHMARK_OUTPUT="$OWO_CHARACTER_BENCHMARK_OUTPUT" \
+            ./.tools/godot --path . --rendering-method mobile --rendering-driver vulkan \
+              --windowed --resolution 1280x720 --position 0,0 \
+              --script res://scripts/tests/CharacterRosterVisualBenchmark.gd
+
+      - name: Compose character roster contact sheets
+        env:
+          OWO_CHARACTER_BENCHMARK_OUTPUT: ${{ github.workspace }}/build/verification/character-roster
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/CharacterRosterContactSheetBuilder.gd
+
+      - name: Upload character roster visual benchmark
+        uses: actions/upload-artifact@v4
+        with:
+          name: owo-ta-character-visual-benchmark
+          path: build/verification/character-roster/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Validate isolated Ikeja street-corner benchmark
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/IkejaStreetCornerBenchmarkValidation.gd
 
       - name: Validate original character asset and selection scene
         env:
