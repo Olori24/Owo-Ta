@@ -4,6 +4,7 @@ class_name CharacterSelection
 signal character_selected(definition: CharacterDefinition)
 
 @export var characters: Array[CharacterDefinition] = []
+@export var start_adventure_on_select: bool = true
 
 @onready var orbit_pivot: Node3D = $OrbitPivot
 @onready var camera: Camera3D = $OrbitPivot/Camera3D
@@ -93,8 +94,13 @@ func _step_character(direction: int) -> void:
 func _select_current() -> void:
 	if current_definition == null:
 		return
-	status_label.text = "%s selected" % current_definition.display_name
+	status_label.text = "Entering the first district as %s..." % current_definition.display_name
+	GameSession.set_selected_character(current_definition)
 	character_selected.emit(current_definition)
+	if start_adventure_on_select:
+		var change_error := get_tree().change_scene_to_file("res://scenes/world/first_district.tscn")
+		if change_error != OK:
+			push_error("Could not enter the first district: " + str(change_error))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:

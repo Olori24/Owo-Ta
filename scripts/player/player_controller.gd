@@ -11,6 +11,8 @@ var jump_requested := false
 var character_animation_player: AnimationPlayer
 var current_animation := ""
 var landing_animation_active := false
+var selected_character_definition: CharacterDefinition
+var animation_clip_names: Dictionary = {"idle": "idle", "walk": "walk", "run": "run", "jump": "jump", "landing": "landing"}
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var visual_body: Node3D = $Body
@@ -18,11 +20,38 @@ var landing_animation_active := false
 func _ready() -> void:
 	add_to_group("player")
 	_register_actions()
+	_install_selected_character_visual()
 	character_animation_player = _find_animation_player($Body/CharacterVisual)
 	if character_animation_player != null:
 		character_animation_player.animation_finished.connect(_on_character_animation_finished)
 		_configure_character_animation_loops()
 	_play_character_animation("idle")
+
+func _install_selected_character_visual() -> void:
+	selected_character_definition = GameSession.get_selected_character()
+	if selected_character_definition == null or selected_character_definition.visual_scene == null:
+		return
+	animation_clip_names = {
+		"idle": String(selected_character_definition.idle_clip),
+		"walk": String(selected_character_definition.walk_clip),
+		"run": String(selected_character_definition.run_clip),
+		"jump": String(selected_character_definition.jump_clip),
+		"landing": String(selected_character_definition.landing_clip)
+	}
+	var existing_visual := visual_body.get_node_or_null("CharacterVisual")
+	if existing_visual != null:
+		visual_body.remove_child(existing_visual)
+		existing_visual.queue_free()
+	var instance := selected_character_definition.visual_scene.instantiate()
+	if not instance is Node3D:
+		push_error("Selected character visual root must be Node3D: " + String(selected_character_definition.character_id))
+		instance.free()
+		return
+	instance.name = "CharacterVisual"
+	visual_body.add_child(instance)
+
+func _character_clip(animation_key: String) -> String:
+	return String(animation_clip_names.get(animation_key, animation_key))
 
 func _register_actions() -> void:
 	var bindings := {
@@ -101,24 +130,27 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 	return null
 
 func _configure_character_animation_loops() -> void:
-	for animation_name in ["idle", "walk", "run"]:
+	for animation_key in ["idle", "walk", "run"]:
+		var animation_name := _character_clip(animation_key)
 		if character_animation_player.has_animation(animation_name):
 			character_animation_player.get_animation(animation_name).loop_mode = Animation.LOOP_LINEAR
-	if character_animation_player.has_animation("landing"):
-		character_animation_player.get_animation("landing").loop_mode = Animation.LOOP_NONE
+	var landing_clip := _character_clip("landing")
+	if character_animation_player.has_animation(landing_clip):
+		character_animation_player.get_animation(landing_clip).loop_mode = Animation.LOOP_NONE
 
 func _on_character_animation_finished(animation_name: StringName) -> void:
-	if animation_name == &"landing":
+	if String(animation_name) == _character_clip("landing"):
 		landing_animation_active = false
 		current_animation = ""
 
-func _play_character_animation(animation_name: String) -> void:
+func _play_character_animation(animation_key: String) -> void:
+	var animation_name := _character_clip(animation_key)
 	if character_animation_player == null or not character_animation_player.has_animation(animation_name):
 		return
 	if current_animation == animation_name and character_animation_player.is_playing():
 		return
 	current_animation = animation_name
-	landing_animation_active = animation_name == "landing"
+	landing_animation_active = animation_key == "landing"
 	character_animation_player.play(animation_name)
 
 func _update_character_animation(direction: Vector3, was_on_floor: bool) -> void:

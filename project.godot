@@ -5,7 +5,7 @@ config_version=5
 [application]
 config/name="OWO TÀ"
 config/version="0.2.0"
-run/main_scene="res://scenes/world/first_district.tscn"
+run/main_scene="res://scenes/characters/character_selection.tscn"
 config/features=PackedStringArray("4.3")
 config/icon="res://icon.svg"
 
@@ -26,3 +26,7 @@ environment/defaults/default_clear_color=Color(0.35, 0.55, 0.68, 1)
 
 [physics]
 3d/default_gravity=9.8
+
+[autoload]
+
+GameSession="*res://scripts/game_session.gd"
