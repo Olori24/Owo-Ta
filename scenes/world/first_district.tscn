@@ -81,7 +81,7 @@ size = Vector3(0.18, 0.04, 2.2)
 size = Vector3(0.72, 0.05, 1.8)
 
 [sub_resource type="BoxMesh" id="StreetShopMesh"]
-size = Vector3(10, 6, 5)
+size = Vector3(8, 6, 5)
 
 [sub_resource type="BoxMesh" id="StreetWindowMesh"]
 size = Vector3(2.1, 1.65, 0.12)
@@ -90,7 +90,7 @@ size = Vector3(2.1, 1.65, 0.12)
 size = Vector3(1.25, 2.55, 0.18)
 
 [sub_resource type="BoxMesh" id="StreetAwningMesh"]
-size = Vector3(10, 0.28, 1.5)
+size = Vector3(8, 0.28, 1.5)
 
 [sub_resource type="BoxShape3D" id="StreetShopCollision"]
 size = Vector3(10, 6, 5)
@@ -260,17 +260,17 @@ mesh = SubResource("StreetCrosswalkMesh")
 material_override = SubResource("StreetWhite")
 
 [node name="IkejaStorefront" type="Node3D" parent="."]
-position = Vector3(-9.5, 3, -12)
+position = Vector3(-7.5, 3, -12)
 rotation_degrees = Vector3(0, 180, 0)
 [node name="BuildingBody" type="MeshInstance3D" parent="IkejaStorefront"]
 mesh = SubResource("StreetShopMesh")
 material_override = SubResource("StreetPlaster")
 [node name="FrontWindowLeft" type="MeshInstance3D" parent="IkejaStorefront"]
-position = Vector3(-2.65, -0.25, -2.58)
+position = Vector3(-2.0, -0.25, -2.58)
 mesh = SubResource("StreetWindowMesh")
 material_override = SubResource("StreetGlass")
 [node name="FrontWindowRight" type="MeshInstance3D" parent="IkejaStorefront"]
-position = Vector3(2.65, -0.25, -2.58)
+position = Vector3(2.0, -0.25, -2.58)
 mesh = SubResource("StreetWindowMesh")
 material_override = SubResource("StreetGlass")
 [node name="ShopDoor" type="MeshInstance3D" parent="IkejaStorefront"]
@@ -298,7 +298,7 @@ outline_modulate = Color(0.03, 0.08, 0.08, 1)
 shape = SubResource("StreetShopCollision")
 
 [node name="IkejaBusStop" type="Node3D" parent="."]
-position = Vector3(9.5, 0.2, -5)
+position = Vector3(7.0, 0.2, -5)
 [node name="ShelterRoof" type="MeshInstance3D" parent="IkejaBusStop"]
 position = Vector3(0, 2.25, 0)
 mesh = SubResource("StreetWindowMesh")
@@ -347,12 +347,12 @@ scale = Vector3(0.25, 0.08, 0.16)
 material_override = SubResource("StreetYellow")
 
 [node name="StreetPlanter" type="MeshInstance3D" parent="."]
-position = Vector3(-9.5, 0.55, -7)
+position = Vector3(-7.5, 0.55, -7)
 mesh = SubResource("StreetWindowMesh")
 scale = Vector3(0.9, 0.55, 0.85)
 material_override = SubResource("StreetTerracotta")
 [node name="StreetFoliage" type="MeshInstance3D" parent="."]
-position = Vector3(-9.5, 1.25, -7)
+position = Vector3(-7.5, 1.25, -7)
 mesh = SubResource("StreetWindowMesh")
 scale = Vector3(0.6, 0.75, 0.55)
 material_override = SubResource("StreetLeaf")
