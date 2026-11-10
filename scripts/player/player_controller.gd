@@ -128,6 +128,9 @@ func apply_look(delta_pixels: Vector2) -> void:
 		deg_to_rad(25.0)
 	)
 
+func get_character_animation_player() -> AnimationPlayer:
+	return character_animation_player
+
 func _find_animation_player(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:
 		return node as AnimationPlayer

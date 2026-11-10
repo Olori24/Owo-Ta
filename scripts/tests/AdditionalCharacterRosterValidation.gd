@@ -290,6 +290,7 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 			continue
 		root.add_child(player)
 		await process_frame
+		await physics_frame
 		var visual := player.get_node_or_null("Body/CharacterVisual") as Node3D
 		_check(visual != null, "Player mounts selected visual " + String(definition.character_id))
 		if visual != null:
@@ -297,11 +298,15 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 			var animation_players := _collect_animation_players(visual)
 			_check(not animation_players.is_empty(), "Selected visual exposes AnimationPlayer for " + String(definition.character_id))
 			if not animation_players.is_empty():
-				var animation_player := animation_players[0]
-				for clip in [String(definition.idle_clip), String(definition.walk_clip), String(definition.run_clip), String(definition.jump_clip), String(definition.landing_clip)]:
-					_check(animation_player.has_animation(clip), "Selected visual exposes " + clip + " for " + String(definition.character_id))
-				_check(animation_player.autoplay.is_empty(), "Selected visual disables imported autoplay for " + String(definition.character_id))
-				_check(String(animation_player.current_animation) == String(definition.idle_clip), "Selected visual starts in idle for " + String(definition.character_id))
+				var animation_player := player.get_character_animation_player() as AnimationPlayer
+				_check(animation_player != null and animation_players.has(animation_player), "Player controller owns an AnimationPlayer inside " + String(definition.character_id))
+				if animation_player != null:
+					for clip in [String(definition.idle_clip), String(definition.walk_clip), String(definition.run_clip), String(definition.jump_clip), String(definition.landing_clip)]:
+						_check(animation_player.has_animation(clip), "Selected visual exposes " + clip + " for " + String(definition.character_id))
+					_check(animation_player.autoplay.is_empty(), "Selected visual disables imported autoplay for " + String(definition.character_id))
+					var active_clip := String(animation_player.current_animation)
+					print("ROSTER_ANIMATION_STATE: " + String(definition.character_id) + " active=" + active_clip + " playing=" + str(animation_player.is_playing()))
+					_check(active_clip == String(definition.idle_clip), "Selected visual starts in idle for " + String(definition.character_id) + " (active: " + active_clip + ")")
 		player.queue_free()
 		await process_frame
 	var game_session := root.get_node_or_null("GameSession")
