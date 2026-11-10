@@ -90,6 +90,11 @@ jobs:
               --windowed --resolution 1280x720 --position 0,0 \
               --script res://scripts/tests/CharacterRosterVisualBenchmark.gd
 
+      - name: Compose character roster contact sheets
+        env:
+          OWO_CHARACTER_BENCHMARK_OUTPUT: ${{ github.workspace }}/build/verification/character-roster
+        run: ./.tools/godot --headless --path . --script res://scripts/tests/CharacterRosterContactSheetBuilder.gd
+
       - name: Upload character roster visual benchmark
         uses: actions/upload-artifact@v4
         with:
