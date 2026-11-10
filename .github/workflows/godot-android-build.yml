@@ -57,7 +57,6 @@ jobs:
           before, after = s.split(marker, 1)
           lines = after.splitlines()
           values = {
-              'keystore/debug': f'"{Path.home()}/../../runner.temp/owo-ta-debug-signing/debug.keystore"',
               'keystore/debug_user': '"androiddebugkey"',
               'keystore/debug_password': '"android"',
           }
@@ -76,7 +75,7 @@ jobs:
           for key, value in values.items():
               if key not in replaced:
                   output.append(key + '=' + value)
-          p.write_text(before + marker + '\\n'.join(output))
+          p.write_text(before + marker + '\n'.join(output))
           PY
 
       - name: Set up Java
