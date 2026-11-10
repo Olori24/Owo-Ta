@@ -68,7 +68,10 @@ func _validate_character(character_id: String, definition: CharacterDefinition, 
 	_check(String(budget.get("character_id", "")) == character_id, character_id + " budget ID matches")
 	_check(FileAccess.file_exists(base + "PROVENANCE.md"), character_id + " has provenance and license documentation")
 	_check(FileAccess.file_exists(base + "source/.gdignore"), character_id + " editable Blender source is excluded from runtime imports")
-	_check(FileAccess.file_exists(String(budget.get("toolchain", {}).get("generation_script", ""))), character_id + " deterministic Blender build script exists")
+	var generation_script_path := String(budget.get("toolchain", {}).get("generation_script", ""))
+	if not generation_script_path.begins_with("res://"):
+		generation_script_path = "res://" + generation_script_path
+	_check(FileAccess.file_exists(generation_script_path), character_id + " deterministic Blender build script exists")
 	var blend_path := base + "source/" + character_id + ".blend"
 	var blend_bytes := FileAccess.get_file_as_bytes(blend_path) if FileAccess.file_exists(blend_path) else PackedByteArray()
 	_check(blend_bytes.size() > 8 and blend_bytes.slice(0, 7).get_string_from_ascii() == "BLENDER", character_id + " editable Blender source exists and has a valid signature")

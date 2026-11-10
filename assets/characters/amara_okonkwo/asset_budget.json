@@ -54,4 +54,4 @@
     "The four authored base-colour images are embedded in the GLB; metallic and roughness are set in the PBR materials.",
     "Measured output values and GLB SHA-256 are validated by AdditionalCharacterRosterValidation.gd and Blender rebuild checks."
   ]
-}\n
+}
