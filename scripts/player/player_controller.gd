@@ -23,6 +23,8 @@ func _ready() -> void:
 	_install_selected_character_visual()
 	character_animation_player = _find_animation_player($Body/CharacterVisual)
 	if character_animation_player != null:
+		character_animation_player.autoplay = ""
+		character_animation_player.stop()
 		character_animation_player.animation_finished.connect(_on_character_animation_finished)
 		_configure_character_animation_loops()
 	_play_character_animation("idle")

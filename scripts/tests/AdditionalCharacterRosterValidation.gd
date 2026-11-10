@@ -300,6 +300,7 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 				var animation_player := animation_players[0]
 				for clip in [String(definition.idle_clip), String(definition.walk_clip), String(definition.run_clip), String(definition.jump_clip), String(definition.landing_clip)]:
 					_check(animation_player.has_animation(clip), "Selected visual exposes " + clip + " for " + String(definition.character_id))
+				_check(animation_player.autoplay.is_empty(), "Selected visual disables imported autoplay for " + String(definition.character_id))
 				_check(String(animation_player.current_animation) == String(definition.idle_clip), "Selected visual starts in idle for " + String(definition.character_id))
 		player.queue_free()
 		await process_frame

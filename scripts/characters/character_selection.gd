@@ -77,6 +77,8 @@ func _play_idle_if_available() -> void:
 		return
 	var clip := String(current_definition.idle_clip)
 	if player.has_animation(clip):
+		player.autoplay = ""
+		player.stop()
 		player.play(clip)
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
