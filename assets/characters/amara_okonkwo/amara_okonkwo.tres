@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CharacterDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/character_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://assets/characters/amara_okonkwo/amara_okonkwo.glb" id="2_visual"]
+
+[resource]
+script = ExtResource("1_definition")
+character_id = &"amara_okonkwo"
+display_name = "Amara Okonkwo"
+bio = "A fictional contemporary Nigerian landscape architect who maps public play spaces and volunteers as a futsal coach. Amara is precise, warm and direct. One individual, not a generalized cultural portrait."
+role = "Landscape architect · futsal coach"
+accent_color = Color(0.78, 0.31, 0.16, 1)
+visual_scene = ExtResource("2_visual")
+idle_clip = &"idle"
+walk_clip = &"walk"
+run_clip = &"run"
+jump_clip = &"jump"
+landing_clip = &"landing"
+turn_clip = &"turn"
+stop_clip = &"stop"

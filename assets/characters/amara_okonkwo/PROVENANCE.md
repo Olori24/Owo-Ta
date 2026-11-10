@@ -1,0 +1,7 @@
+# Amara Okonkwo — asset provenance and license
+
+Amara Okonkwo is a fictional contemporary Nigerian character authored specifically for OWO TÀ. The geometry, UV layout, rig, textures, materials, clothing details, animations and preview were created procedurally by `build_amara_okonkwo.py` using Blender 4.0.2. The editable, self-contained source is `source/amara_okonkwo.blend`; the Godot runtime handoff is `amara_okonkwo.glb`; authored base-colour maps are in `textures/`; the preview is `preview/amara_okonkwo_character.png`.
+
+No marketplace assets, external model or texture files, copied character designs, web services, paid tools or subscriptions were used. The project treats these original source assets as OWO TÀ project work, preserving the repository owner's existing ownership and distribution control. No separate public license is assigned. Blender is an authoring tool only and is not linked, bundled, or required at game runtime; the project does not redistribute Blender. Runtime material data uses standard glTF 2.0 metallic-roughness PBR and embedded base-colour images.
+
+Rebuild with Blender 4.0.2 using `blender --background --python assets/characters/amara_okonkwo/build_amara_okonkwo.py`. The generation seed and all inputs are local and deterministic. Rebuilds overwrite only files owned by this character generator. The current asset measurements and SHA-256 are recorded in `asset_budget.json` once verified; asset-budget values are project validation guardrails, not Android-device guarantees.

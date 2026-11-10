@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CharacterDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/character_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://assets/characters/tunde_balogun/tunde_balogun.glb" id="2_visual"]
+
+[resource]
+script = ExtResource("1_definition")
+character_id = &"tunde_balogun"
+display_name = "Tunde Balogun"
+bio = "A Lagos-based community radio field producer who is quick-witted, observant and generous with new artists. One fictional individual, not a general representation of Nigerians."
+role = "Community radio field producer"
+accent_color = Color(0.86, 0.31, 0.14, 1)
+visual_scene = ExtResource("2_visual")
+idle_clip = &"idle"
+walk_clip = &"walk"
+run_clip = &"run"
+jump_clip = &"jump"
+landing_clip = &"landing"
+turn_clip = &"turn"
+stop_clip = &"stop"

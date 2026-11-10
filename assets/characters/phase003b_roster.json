@@ -1,0 +1,24 @@
+{
+  "roster_id": "owo_ta_phase003b_playable_roster",
+  "description": "Three original character definitions available to the existing CharacterSelection architecture; this manifest does not change the current selection scene or main game flow.",
+  "characters": [
+    {
+      "character_id": "kemi_adebayo",
+      "definition": "res://assets/characters/kemi_adebayo/kemi_adebayo.tres",
+      "gender_presentation": "female",
+      "authored_in_phase": "003"
+    },
+    {
+      "character_id": "tunde_balogun",
+      "definition": "res://assets/characters/tunde_balogun/tunde_balogun.tres",
+      "gender_presentation": "male",
+      "authored_in_phase": "003b"
+    },
+    {
+      "character_id": "amara_okonkwo",
+      "definition": "res://assets/characters/amara_okonkwo/amara_okonkwo.tres",
+      "gender_presentation": "female",
+      "authored_in_phase": "003b"
+    }
+  ]
+}

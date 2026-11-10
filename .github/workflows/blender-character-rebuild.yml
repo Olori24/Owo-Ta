@@ -1,0 +1,113 @@
+name: Blender character asset rebuild
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/phase-003b-character-roster
+    paths:
+      - ".github/workflows/blender-character-rebuild.yml"
+      - "assets/characters/amara_okonkwo/**"
+      - "assets/characters/tunde_balogun/**"
+
+permissions:
+  contents: read
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out character pipeline
+        uses: actions/checkout@v4
+
+      - name: Install Blender runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-6 libxxf86vm1 libxfixes3 libxi6 libxrender1 libsm6 libgl1 libglu1-mesa
+
+      - name: Download and verify Blender 4.0.2
+        run: |
+          curl --fail --location --retry 3 -o "$RUNNER_TEMP/blender.tar.xz" https://download.blender.org/release/Blender4.0/blender-4.0.2-linux-x64.tar.xz
+          mkdir -p "$RUNNER_TEMP/blender"
+          tar -xJf "$RUNNER_TEMP/blender.tar.xz" -C "$RUNNER_TEMP/blender" --strip-components=1
+          "$RUNNER_TEMP/blender/blender" --version | head -n 1
+          "$RUNNER_TEMP/blender/blender" --version | head -n 1 | grep -F "Blender 4.0.2"
+
+      - name: Regenerate Amara and Tunde from editable sources
+        env:
+          OWO_TA_SKIP_PREVIEW_RENDER: "1"
+        run: |
+          "$RUNNER_TEMP/blender/blender" --background --python assets/characters/amara_okonkwo/build_amara_okonkwo.py
+          "$RUNNER_TEMP/blender/blender" --background --python assets/characters/tunde_balogun/build_tunde_balogun.py
+
+      - name: Recalculate measured asset budgets and verify idle exports
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib, struct
+          root = pathlib.Path("assets/characters")
+          report = []
+          for cid in ("amara_okonkwo", "tunde_balogun"):
+              base = root / cid
+              glb_path = base / f"{cid}.glb"
+              blend_path = base / "source" / f"{cid}.blend"
+              data = glb_path.read_bytes()
+              if data[:4] != b"glTF" or struct.unpack_from("<I", data, 4)[0] != 2:
+                  raise SystemExit(f"{cid}: invalid GLB 2.0 header")
+              json_len = struct.unpack_from("<I", data, 12)[0]
+              gltf = json.loads(data[20:20 + json_len].decode("utf-8").rstrip(" \\0"))
+              vertices = triangles = surfaces = 0
+              accessors = gltf.get("accessors", [])
+              for mesh in gltf.get("meshes", []):
+                  for primitive in mesh.get("primitives", []):
+                      surfaces += 1
+                      attrs = primitive.get("attributes", {})
+                      if "POSITION" not in attrs:
+                          raise SystemExit(f"{cid}: primitive has no POSITION")
+                      vertices += int(accessors[attrs["POSITION"]]["count"])
+                      if "indices" in primitive:
+                          triangles += int(accessors[primitive["indices"]]["count"]) // 3
+              animations = gltf.get("animations", [])
+              idle = next((a for a in animations if a.get("name") == "idle"), None)
+              if idle is None:
+                  raise SystemExit(f"{cid}: idle animation missing")
+              idle_duration = 0.0
+              for sampler in idle.get("samplers", []):
+                  accessor = accessors[sampler["input"]]
+                  if accessor.get("max"):
+                      idle_duration = max(idle_duration, float(accessor["max"][0]))
+              if idle_duration < 1.5:
+                  raise SystemExit(f"{cid}: idle export only {idle_duration:.3f}s; expected >=1.5s for 48 frames at 30 FPS")
+              textures = sorted((base / "textures").glob("*.png"))
+              budget_path = base / "asset_budget.json"
+              budget = json.loads(budget_path.read_text())
+              measured = budget["measured_export"]
+              measured.update({
+                  "glb_bytes": len(data),
+                  "glb_sha256": hashlib.sha256(data).hexdigest(),
+                  "editable_blend_bytes": blend_path.stat().st_size,
+                  "vertices": vertices,
+                  "triangles": triangles,
+                  "material_surfaces": surfaces,
+                  "materials": len(gltf.get("materials", [])),
+                  "embedded_images": len(gltf.get("images", [])),
+                  "source_texture_bytes": sum(p.stat().st_size for p in textures),
+                  "skeleton_joints": len(gltf.get("skins", [{}])[0].get("joints", [])),
+                  "animation_clip_count": len(animations),
+              })
+              budget_path.write_text(json.dumps(budget, indent=2) + "\n")
+              report.append(f"{cid}: GLB={len(data)} bytes SHA256={measured['glb_sha256']} vertices={vertices} triangles={triangles} joints={measured['skeleton_joints']} clips={len(animations)} idle={idle_duration:.3f}s")
+          pathlib.Path("character-rebuild-report.txt").write_text("\n".join(report) + "\n")
+          print("\n".join(report))
+          PY
+
+      - name: Upload regenerated character sources and runtime assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: owo-ta-phase-003b-regenerated-characters
+          path: |
+            assets/characters/amara_okonkwo/
+            assets/characters/tunde_balogun/
+            character-rebuild-report.txt
+          if-no-files-found: error
+          retention-days: 14
