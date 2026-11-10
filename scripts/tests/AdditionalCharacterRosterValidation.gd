@@ -215,6 +215,8 @@ func _validate_character(character_id: String, definition: CharacterDefinition, 
 			continue
 		var animation := player.get_animation(clip)
 		_check(animation.length > 0.0 and animation.get_track_count() > 0, character_id + " " + clip + " contains keyed motion")
+		if clip == "idle":
+			_check(animation.length >= 1.5, character_id + " idle clip preserves the authored 48-frame range at 30 FPS")
 		player.stop()
 		skeleton.reset_bone_poses()
 		var before := _pose_signature(skeleton)
