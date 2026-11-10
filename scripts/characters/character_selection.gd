@@ -94,7 +94,7 @@ func _step_character(direction: int) -> void:
 func _select_current() -> void:
 	if current_definition == null:
 		return
-	status_label.text = "Entering the first district as %s..." % current_definition.display_name
+	status_label.text = "%s selected" % current_definition.display_name
 	var game_session := get_node_or_null("/root/GameSession")
 	if game_session == null:
 		push_error("GameSession autoload is unavailable; cannot launch the selected character.")
