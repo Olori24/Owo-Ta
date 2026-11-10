@@ -15,6 +15,11 @@ on:
 permissions:
   contents: read
 
+# Serialize debug exports so the first run can seed the persistent debug keystore cache.
+concurrency:
+  group: owo-ta-android-debug-signing-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   android-export:
     runs-on: ubuntu-22.04
@@ -22,6 +27,57 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      # This key is DEBUG-ONLY. It is persisted in the private Actions cache, never used for release signing.
+      - name: Restore persistent debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/owo-ta-debug-signing
+          key: owo-ta-debug-signing-v1
+
+      - name: Create debug signing key when cache is empty
+        run: |
+          mkdir -p "$RUNNER_TEMP/owo-ta-debug-signing"
+          if [ ! -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" \
+              -storepass android -keypass android \
+              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=OWO TA Debug,O=Olori24,C=NG"
+          fi
+          test -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore"
+
+      - name: Configure Godot debug keystore for this runner
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("export_presets.cfg")
+          s = p.read_text()
+          marker = '[preset.0.options]'
+          before, after = s.split(marker, 1)
+          lines = after.splitlines()
+          values = {
+              'keystore/debug': f'"{Path.home()}/../../runner.temp/owo-ta-debug-signing/debug.keystore"',
+              'keystore/debug_user': '"androiddebugkey"',
+              'keystore/debug_password': '"android"',
+          }
+          # Use the actual runner-temp path supplied by the workflow environment.
+          import os
+          values['keystore/debug'] = '"' + os.environ['RUNNER_TEMP'] + '/owo-ta-debug-signing/debug.keystore"'
+          replaced = set()
+          output = []
+          for line in lines:
+              key = line.split('=', 1)[0] if '=' in line else ''
+              if key in values:
+                  output.append(key + '=' + values[key])
+                  replaced.add(key)
+              else:
+                  output.append(line)
+          for key, value in values.items():
+              if key not in replaced:
+                  output.append(key + '=' + value)
+          p.write_text(before + marker + '\\n'.join(output))
+          PY
 
       - name: Set up Java
         uses: actions/setup-java@v4
