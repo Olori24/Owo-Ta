@@ -278,6 +278,18 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 	_check(player_scene != null, "Playable player scene loads for roster integration")
 	if player_scene == null:
 		return
+	# Give every roster player a real floor so the first physics tick does not
+	# incorrectly classify the initial idle pose as a falling/jump animation.
+	var test_ground := StaticBody3D.new()
+	test_ground.name = "RosterTestGround"
+	test_ground.position = Vector3(0, -0.5, 0)
+	var ground_collision := CollisionShape3D.new()
+	var ground_shape := BoxShape3D.new()
+	ground_shape.size = Vector3(100, 1, 100)
+	ground_collision.shape = ground_shape
+	test_ground.add_child(ground_collision)
+	root.add_child(test_ground)
+	await physics_frame
 	for definition in definitions:
 		var game_session := root.get_node_or_null("GameSession")
 		_check(game_session != null, "GameSession autoload is available to the playable roster test")
@@ -288,9 +300,11 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 		_check(player != null, "Player scene instantiates for " + String(definition.character_id))
 		if player == null:
 			continue
+		player.position = Vector3.ZERO
 		root.add_child(player)
 		await process_frame
 		await physics_frame
+		_check(player.is_on_floor(), "Roster player is grounded before initial animation check: " + String(definition.character_id))
 		var visual := player.get_node_or_null("Body/CharacterVisual") as Node3D
 		_check(visual != null, "Player mounts selected visual " + String(definition.character_id))
 		if visual != null:
@@ -312,6 +326,8 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 	var game_session := root.get_node_or_null("GameSession")
 	if game_session != null:
 		game_session.call("clear_selected_character")
+	test_ground.queue_free()
+	await process_frame
 
 func _pose_signature(skeleton: Skeleton3D) -> String:
 	var values := PackedFloat32Array()
