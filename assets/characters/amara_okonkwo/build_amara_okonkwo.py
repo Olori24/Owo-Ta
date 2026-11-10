@@ -600,10 +600,11 @@ bpy.ops.export_scene.gltf(
     export_yup=True,
 )
 
-# Render a visual inspection image from the authored asset (not used as a game asset).
-scene.render.filepath = str(PREVIEW / "amara_okonkwo_character.png")
-scene.render.resolution_percentage = 80
-bpy.ops.render.render(write_still=True)
+# Render a visual inspection image locally; CI can skip GPU-dependent rendering.
+if os.environ.get("OWO_TA_SKIP_PREVIEW_RENDER") != "1":
+    scene.render.filepath = str(PREVIEW / "amara_okonkwo_character.png")
+    scene.render.resolution_percentage = 80
+    bpy.ops.render.render(write_still=True)
 print(f"CHARACTER_ID={arm['character_id']}")
 print(f"CHARACTER_SOURCE={blend_path}")
 print(f"CHARACTER_GLB={OUT / 'amara_okonkwo.glb'}")
