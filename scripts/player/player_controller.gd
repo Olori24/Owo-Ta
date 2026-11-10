@@ -28,7 +28,11 @@ func _ready() -> void:
 	_play_character_animation("idle")
 
 func _install_selected_character_visual() -> void:
-	selected_character_definition = GameSession.get_selected_character()
+	var game_session := get_node_or_null("/root/GameSession")
+	if game_session == null:
+		push_error("GameSession autoload is unavailable; using the default Kemi visual.")
+		return
+	selected_character_definition = game_session.call("get_selected_character") as CharacterDefinition
 	if selected_character_definition == null or selected_character_definition.visual_scene == null:
 		return
 	animation_clip_names = {

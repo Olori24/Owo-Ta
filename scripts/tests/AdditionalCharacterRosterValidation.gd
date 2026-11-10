@@ -265,7 +265,10 @@ func _exercise_selection(definitions: Array[CharacterDefinition]) -> void:
 		_check(not selector.previous_button.disabled and not selector.next_button.disabled, "Three-character roster enables navigation")
 		selector._select_current()
 		_check(not selected_ids.is_empty() and selected_ids.back() == expected.character_id, "Selector emits selected definition " + String(expected.character_id))
-		_check(GameSession.get_selected_character() == expected, "Game session stores selected definition " + String(expected.character_id))
+		var game_session := root.get_node_or_null("GameSession")
+		_check(game_session != null, "GameSession autoload is available to the selector")
+		if game_session != null:
+			_check(game_session.call("get_selected_character") == expected, "Game session stores selected definition " + String(expected.character_id))
 	selector.free()
 	await process_frame
 	await _exercise_playable_visuals(definitions)
@@ -276,7 +279,11 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 	if player_scene == null:
 		return
 	for definition in definitions:
-		GameSession.set_selected_character(definition)
+		var game_session := root.get_node_or_null("GameSession")
+		_check(game_session != null, "GameSession autoload is available to the playable roster test")
+		if game_session == null:
+			return
+		game_session.call("set_selected_character", definition)
 		var player := player_scene.instantiate() as CharacterBody3D
 		_check(player != null, "Player scene instantiates for " + String(definition.character_id))
 		if player == null:
@@ -296,7 +303,9 @@ func _exercise_playable_visuals(definitions: Array[CharacterDefinition]) -> void
 				_check(String(animation_player.current_animation) == String(definition.idle_clip), "Selected visual starts in idle for " + String(definition.character_id))
 		player.queue_free()
 		await process_frame
-	GameSession.clear_selected_character()
+	var game_session := root.get_node_or_null("GameSession")
+	if game_session != null:
+		game_session.call("clear_selected_character")
 
 func _pose_signature(skeleton: Skeleton3D) -> String:
 	var values := PackedFloat32Array()

@@ -95,7 +95,11 @@ func _select_current() -> void:
 	if current_definition == null:
 		return
 	status_label.text = "Entering the first district as %s..." % current_definition.display_name
-	GameSession.set_selected_character(current_definition)
+	var game_session := get_node_or_null("/root/GameSession")
+	if game_session == null:
+		push_error("GameSession autoload is unavailable; cannot launch the selected character.")
+		return
+	game_session.call("set_selected_character", current_definition)
 	character_selected.emit(current_definition)
 	if start_adventure_on_select:
 		var change_error := get_tree().change_scene_to_file("res://scenes/world/first_district.tscn")
