@@ -11,10 +11,9 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
-	var main_scene_path := String(ProjectSettings.get_setting("application/run/main_scene", ""))
-	_check(not main_scene_path.is_empty(), "Project has a configured main scene")
-	var packed := load(main_scene_path) as PackedScene
-	_check(packed != null, "Configured district scene loads as a PackedScene")
+	const DISTRICT_SCENE_PATH := "res://scenes/world/first_district.tscn"
+	var packed := load(DISTRICT_SCENE_PATH) as PackedScene
+	_check(packed != null, "First district gameplay scene loads as a PackedScene")
 	if packed == null:
 		_finish()
 		return
@@ -29,9 +28,9 @@ func _run() -> void:
 	await RenderingServer.frame_post_draw
 
 	var player := district.get_node_or_null("Player") as CharacterBody3D
-	_check(player != null, "Configured district contains the playable CharacterBody3D")
+	_check(player != null, "First district contains the playable CharacterBody3D")
 	var visual := player.get_node_or_null("Body/CharacterVisual") as Node3D if player else null
-	_check(visual != null and visual.visible and visual.is_visible_in_tree(), "Kemi CharacterVisual is visible in the running scene")
+	_check(visual != null and visual.visible and visual.is_visible_in_tree(), "Default Kemi CharacterVisual is visible in the running scene")
 
 	var mesh_instance := _find_mesh(visual) if visual else null
 	_check(mesh_instance != null and mesh_instance.mesh != null, "Kemi has a loaded mesh resource")
