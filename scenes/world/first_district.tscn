@@ -117,6 +117,7 @@ mesh = SubResource("GroundMesh")
 shape = SubResource("GroundShape")
 
 [node name="Road" type="MeshInstance3D" parent="."]
+visible = false
 position = Vector3(0, 0.05, -8)
 mesh = SubResource("RoadMesh")
 
@@ -260,7 +261,7 @@ material_override = SubResource("StreetWhite")
 
 [node name="IkejaStorefront" type="Node3D" parent="."]
 position = Vector3(-9.5, 3, -12)
-rotation_degrees = Vector3(0, -90, 0)
+rotation_degrees = Vector3(0, 180, 0)
 [node name="BuildingBody" type="MeshInstance3D" parent="IkejaStorefront"]
 mesh = SubResource("StreetShopMesh")
 material_override = SubResource("StreetPlaster")
