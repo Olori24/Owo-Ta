@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="2_controls"]
@@ -78,8 +78,10 @@ size = Vector3(34, 0.5, 54)
 [sub_resource type="BoxShape3D" id="StoreCollisionShape"]
 size = Vector3(10, 6, 5)
 
-[node name="LagosStreetCornerBenchmark" type="Node3D"]
-groups = ["benchmark_scene"]
+[sub_resource type="BoxShape3D" id="StoryPointShape"]
+size = Vector3(3, 2, 3)
+
+[node name="LagosStreetCornerBenchmark" type="Node3D" groups=["benchmark_scene"]]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("WorldEnvironment")
@@ -116,7 +118,7 @@ mesh = SubResource("PavementMesh")
 material_override = SubResource("Pavement")
 
 [node name="RightPavement" type="MeshInstance3D" parent="."]
-position = Vector3(14.5, 0.12, -1)
+position = Vector3(13.5, 0.12, -1)
 mesh = SubResource("PavementMesh")
 material_override = SubResource("Pavement")
 
@@ -251,8 +253,7 @@ pixel_size = 0.006
 modulate = Color(1, 0.92, 0.65, 1)
 outline_size = 6
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StoryPoint"]
-shape = SubResource("GroundShape")
-scale = Vector3(0.12, 0.12, 0.12)
+shape = SubResource("StoryPointShape")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector3(3.5, 0.12, 10)
