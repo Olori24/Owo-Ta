@@ -3,7 +3,7 @@
   "display_name": "Amara Okonkwo",
   "identity": {
     "gender_presentation": "female",
-    "role": "Landscape architect · futsal coach",
+    "role": "Landscape architect \u00b7 futsal coach",
     "bio": "A fictional contemporary Nigerian landscape architect who maps public play spaces and volunteers as a futsal coach. Amara is precise, warm and direct. One individual, not a generalized cultural portrait."
   },
   "expressive_action": "field_sketch",
@@ -26,15 +26,15 @@
     "animation_clips_max": 8
   },
   "measured_export": {
-    "glb_bytes": 1625048,
-    "glb_sha256": "9989701ff9654c78b5f8b3a5c895130366f1ee0dbf1e54cfd97530a8f413656e",
-    "editable_blend_bytes": 3759808,
+    "glb_bytes": 1627384,
+    "glb_sha256": "bf762cbdaefe72becbee7425f229640ba13fdfa7264221e1a20f29db6f428f34",
+    "editable_blend_bytes": 3760076,
     "vertices": 16382,
     "triangles": 17564,
     "material_surfaces": 4,
     "materials": 4,
     "embedded_images": 4,
-    "source_texture_bytes": 244957,
+    "source_texture_bytes": 245221,
     "skeleton_joints": 22,
     "animation_clip_count": 8
   },
@@ -54,4 +54,4 @@
     "The four authored base-colour images are embedded in the GLB; metallic and roughness are set in the PBR materials.",
     "Measured output values and GLB SHA-256 are validated by AdditionalCharacterRosterValidation.gd and Blender rebuild checks."
   ]
-}
+}\n
