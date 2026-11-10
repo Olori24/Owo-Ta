@@ -28,7 +28,7 @@
   "measured_export": {
     "glb_bytes": 1587280,
     "glb_sha256": "83fe968fbecbcb58cb02f0b5dc0cd0028af930a50a423af06b2d9298663056e5",
-    "editable_blend_bytes": 3685176,
+    "editable_blend_bytes": 3684904,
     "vertices": 15874,
     "triangles": 16688,
     "material_surfaces": 4,
