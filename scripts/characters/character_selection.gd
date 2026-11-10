@@ -54,6 +54,9 @@ func show_character(index: int) -> void:
 		instance.free()
 		return
 	current_visual = instance as Node3D
+	var preview_player := _find_animation_player(current_visual)
+	if preview_player != null:
+		preview_player.autoplay = ""
 	model_anchor.add_child(current_visual)
 	current_visual.name = "SelectedCharacterVisual"
 	name_label.text = current_definition.display_name
@@ -77,7 +80,6 @@ func _play_idle_if_available() -> void:
 		return
 	var clip := String(current_definition.idle_clip)
 	if player.has_animation(clip):
-		player.autoplay = ""
 		player.stop()
 		player.play(clip)
 
