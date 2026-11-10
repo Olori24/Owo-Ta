@@ -27,6 +27,20 @@ func _run() -> void:
 	_assert(scene.get_node_or_null("BusStop") != null, "Street-life bus stop landmark exists")
 	_assert(scene.get_node_or_null("StreetLamp") != null, "Street lighting prop exists")
 	_assert(scene.get_node_or_null("MobileControls/TouchOverlay") != null, "Existing mobile touch controls are present")
+	var playable_world := load("res://scenes/world/first_district.tscn") as PackedScene
+	_assert(playable_world != null, "Playable first district scene loads")
+	if playable_world != null:
+		var world := playable_world.instantiate()
+		root.add_child(world)
+		await process_frame
+		_assert(world.get_node_or_null("Player") is CharacterBody3D, "Playable first district retains its selected-character player")
+		_assert(world.get_node_or_null("StreetRoadSurface") is MeshInstance3D, "Playable first district contains the detailed road surface")
+		_assert(world.get_node_or_null("StreetLaneDash01") is MeshInstance3D, "Playable first district contains road lane markings")
+		_assert(world.get_node_or_null("LeftPavement") is MeshInstance3D and world.get_node_or_null("RightPavement") is MeshInstance3D, "Playable first district contains both pavements")
+		_assert(world.get_node_or_null("IkejaStorefront") != null, "Playable first district contains the Ikeja storefront")
+		_assert(world.get_node_or_null("IkejaBusStop") != null, "Playable first district contains the bus stop")
+		world.queue_free()
+		await process_frame
 	scene.queue_free()
 	await process_frame
 	print("IKEJA_STREET_CORNER_BENCHMARK: " + ("PASS" if failures.is_empty() else "FAIL"))
