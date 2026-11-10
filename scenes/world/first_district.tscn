@@ -359,31 +359,31 @@ material_override = SubResource("StreetLeaf")
 
 
 # Extended Lagos street frontage: varied businesses and street-level activity.
-[node name="PharmacyFrontage" type="Node3D" parent="."]
+[node name="IkejaPharmacyBuilding" type="Node3D" parent="."]
 position = Vector3(-17, 4.2, -34)
 rotation_degrees = Vector3(0, 180, 0)
-[node name="Building" type="MeshInstance3D" parent="PharmacyFrontage"]
+[node name="Building" type="MeshInstance3D" parent="IkejaPharmacyBuilding"]
 mesh = SubResource("StreetShopMesh")
 scale = Vector3(1.15, 1.4, 1.15)
 material_override = SubResource("StreetPlaster")
-[node name="WindowLeft" type="MeshInstance3D" parent="PharmacyFrontage"]
+[node name="WindowLeft" type="MeshInstance3D" parent="IkejaPharmacyBuilding"]
 position = Vector3(-2.45, -0.2, -2.95)
 mesh = SubResource("StreetWindowMesh")
 material_override = SubResource("StreetGlass")
-[node name="WindowRight" type="MeshInstance3D" parent="PharmacyFrontage"]
+[node name="WindowRight" type="MeshInstance3D" parent="IkejaPharmacyBuilding"]
 position = Vector3(2.45, -0.2, -2.95)
 mesh = SubResource("StreetWindowMesh")
 material_override = SubResource("StreetGlass")
-[node name="Door" type="MeshInstance3D" parent="PharmacyFrontage"]
+[node name="Door" type="MeshInstance3D" parent="IkejaPharmacyBuilding"]
 position = Vector3(0, -1.65, -2.95)
 mesh = SubResource("StreetDoorMesh")
 material_override = SubResource("StreetTeal")
-[node name="Canopy" type="MeshInstance3D" parent="PharmacyFrontage"]
+[node name="Canopy" type="MeshInstance3D" parent="IkejaPharmacyBuilding"]
 position = Vector3(0, 0.8, -3.35)
 mesh = SubResource("StreetAwningMesh")
 scale = Vector3(1.12, 1, 1)
 material_override = SubResource("StreetTeal")
-[node name="Sign" type="Label3D" parent="PharmacyFrontage"]
+[node name="Sign" type="Label3D" parent="IkejaPharmacyBuilding"]
 position = Vector3(0, 2.25, -3.0)
 text = "IKEJA PHARMACY"
 font_size = 48
@@ -459,18 +459,18 @@ outline_size = 8
 outline_modulate = Color(0.03, 0.06, 0.08, 1)
 
 # A compact roadside kiosk gives the pavement a human-scale focal point.
-[node name="RoadsideKiosk" type="Node3D" parent="."]
+[node name="IkejaSnackKiosk" type="Node3D" parent="."]
 position = Vector3(10.5, 0.75, -13)
-[node name="Counter" type="MeshInstance3D" parent="RoadsideKiosk"]
+[node name="Counter" type="MeshInstance3D" parent="IkejaSnackKiosk"]
 mesh = SubResource("StreetShopMesh")
 scale = Vector3(0.34, 0.25, 0.34)
 material_override = SubResource("StreetTerracotta")
-[node name="Roof" type="MeshInstance3D" parent="RoadsideKiosk"]
+[node name="Roof" type="MeshInstance3D" parent="IkejaSnackKiosk"]
 position = Vector3(0, 1.45, 0)
 mesh = SubResource("StreetAwningMesh")
 scale = Vector3(0.42, 0.45, 0.42)
 material_override = SubResource("StreetTeal")
-[node name="Sign" type="Label3D" parent="RoadsideKiosk"]
+[node name="Sign" type="Label3D" parent="IkejaSnackKiosk"]
 position = Vector3(0, 1.85, 0.25)
 text = "SNACKS"
 font_size = 34
