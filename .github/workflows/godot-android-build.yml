@@ -48,36 +48,11 @@ jobs:
           fi
           test -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore"
 
-      - name: Configure Godot debug keystore for this runner
+      - name: Verify persistent debug keystore exists
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path("export_presets.cfg")
-          s = p.read_text()
-          marker = '[preset.0.options]'
-          before, after = s.split(marker, 1)
-          lines = after.splitlines()
-          values = {
-              'keystore/debug_user': '"androiddebugkey"',
-              'keystore/debug_password': '"android"',
-          }
-          # Use the actual runner-temp path supplied by the workflow environment.
-          import os
-          values['keystore/debug'] = '"' + os.environ['RUNNER_TEMP'] + '/owo-ta-debug-signing/debug.keystore"'
-          replaced = set()
-          output = []
-          for line in lines:
-              key = line.split('=', 1)[0] if '=' in line else ''
-              if key in values:
-                  output.append(key + '=' + values[key])
-                  replaced.add(key)
-              else:
-                  output.append(line)
-          for key, value in values.items():
-              if key not in replaced:
-                  output.append(key + '=' + value)
-          p.write_text(before + marker + '\n'.join(output))
-          PY
+          test -s "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore"
+          keytool -list -v -keystore "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" \
+            -storepass android -alias androiddebugkey | grep -E 'Alias name:|SHA256:'
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -115,6 +90,9 @@ jobs:
         env:
           ANDROID_HOME: ${{ runner.temp }}/android-sdk
           ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.temp }}/owo-ta-debug-signing/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
           mkdir -p build/android
           ./.tools/godot --headless --path . --export-debug "Android Debug APK" build/android/owo_ta-debug.apk
@@ -124,9 +102,12 @@ jobs:
           test -s build/android/owo_ta-debug.apk
           unzip -t build/android/owo_ta-debug.apk
 
-      - name: Verify APK signature
+      - name: Verify APK signature matches persistent debug key
         run: |
-          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs build/android/owo_ta-debug.apk
+          EXPECTED="$(keytool -list -v -keystore "$RUNNER_TEMP/owo-ta-debug-signing/debug.keystore" -storepass android -alias androiddebugkey | awk -F': ' '/SHA256:/{print $2; exit}' | tr -d ':' | tr '[:upper:]' '[:lower:]')"
+          ACTUAL="$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs build/android/owo_ta-debug.apk | awk -F': ' '/certificate SHA-256 digest:/{print $2; exit}')"
+          test -n "$EXPECTED" && test -n "$ACTUAL" && test "$EXPECTED" = "$ACTUAL"
+          echo "APK signer matches the persistent debug keystore: $ACTUAL"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
