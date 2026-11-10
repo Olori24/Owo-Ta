@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/phase-003-character-pipeline
   push:
     branches:
       - main

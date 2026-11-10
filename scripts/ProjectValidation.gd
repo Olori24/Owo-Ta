@@ -39,9 +39,23 @@ func _validate_gameplay_scene(world: Node3D) -> bool:
 		if not player.has_method(required_method):
 			return _fail("Player controller is missing required behavior: " + required_method)
 
-	var body_mesh := player.get_node_or_null("Body") as MeshInstance3D
-	if body_mesh == null or body_mesh.mesh == null:
-		return _fail("Player body mesh is missing.")
+	var visual_body := player.get_node_or_null("Body") as Node3D
+	if visual_body == null:
+		return _fail("Player visual body root is missing.")
+	var character_visual := visual_body.get_node_or_null("CharacterVisual") as Node3D
+	if character_visual == null:
+		return _fail("Production Kemi character visual is missing from the playable player.")
+	var character_meshes: Array[MeshInstance3D] = []
+	var character_skeletons: Array[Skeleton3D] = []
+	var character_animations: Array[AnimationPlayer] = []
+	_collect_character_nodes(character_visual, character_meshes, character_skeletons, character_animations)
+	if character_meshes.is_empty() or character_skeletons.is_empty():
+		return _fail("Playable character must contain a visible skinned mesh and Skeleton3D.")
+	if character_animations.is_empty():
+		return _fail("Playable character must contain an AnimationPlayer.")
+	for clip in ["idle", "walk", "run", "jump", "landing"]:
+		if not character_animations[0].has_animation(clip):
+			return _fail("Playable character is missing required animation: " + clip)
 	var player_collision := player.get_node_or_null("CollisionShape3D") as CollisionShape3D
 	if player_collision == null or player_collision.shape == null:
 		return _fail("Player collision shape is missing.")
@@ -102,3 +116,13 @@ func _fail(message: String) -> bool:
 	push_error("OWO TÀ validation failed: " + message)
 	quit(1)
 	return false
+
+func _collect_character_nodes(node: Node, meshes: Array[MeshInstance3D], skeletons: Array[Skeleton3D], animations: Array[AnimationPlayer]) -> void:
+	if node is MeshInstance3D and (node as MeshInstance3D).mesh != null:
+		meshes.append(node as MeshInstance3D)
+	if node is Skeleton3D:
+		skeletons.append(node as Skeleton3D)
+	if node is AnimationPlayer:
+		animations.append(node as AnimationPlayer)
+	for child in node.get_children():
+		_collect_character_nodes(child, meshes, skeletons, animations)

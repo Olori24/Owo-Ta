@@ -26,12 +26,29 @@ func _run_tests() -> void:
 	if player == null or controls == null:
 		_fail("The configured scene must provide a player and touch overlay for gameplay tests.")
 		return
+	var character_visual := player.get_node_or_null("Body/CharacterVisual") as Node3D
+	if character_visual == null:
+		_fail("The playable player must instance Kemi's production 3D character visual.")
+		return
+	var character_animation := _find_animation_player(character_visual)
+	if not _expect(character_animation != null, "Playable Kemi character must expose its imported AnimationPlayer"):
+		return
+	for clip in ["idle", "walk", "run", "jump", "landing"]:
+		if not _expect(character_animation.has_animation(clip), "Playable Kemi character must expose " + clip + " animation"):
+			return
+	if not _expect(character_animation.current_animation == "idle", "Playable Kemi character must start in its idle animation"):
+		return
+	for clip in ["idle", "walk", "run"]:
+		if not _expect(character_animation.get_animation(clip).loop_mode == Animation.LOOP_LINEAR, clip + " must use linear looping"):
+			return
+	if not _expect(character_animation.get_animation("landing").loop_mode == Animation.LOOP_NONE, "landing must be a non-looping clip"):
+		return
 	controls.size = TEST_VIEW_SIZE
 
 	if not _test_touch_controls(player, controls):
 		quit(1)
 		return
-	if not await _test_player_physics(player, controls):
+	if not await _test_player_physics(player, controls, character_animation):
 		quit(1)
 		return
 
@@ -125,7 +142,7 @@ func _test_touch_controls(player: CharacterBody3D, controls: Control) -> bool:
 	_release_test_actions()
 	return true
 
-func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
+func _test_player_physics(player: CharacterBody3D, controls: Control, character_animation: AnimationPlayer) -> bool:
 	_release_test_actions()
 	player.global_position = Vector3(0.0, 8.0, 0.0)
 	player.velocity = Vector3.ZERO
@@ -140,6 +157,18 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		await physics_frame
 	if not _expect(player.is_on_floor(), "player should land on the district ground before jump testing"):
 		return false
+	player.call("_update_character_animation", Vector3.ZERO, false)
+	if not _expect(character_animation.current_animation == "landing", "a grounded transition must start the landing clip"):
+		return false
+	player.call("_update_character_animation", Vector3.ZERO, true)
+	if not _expect(character_animation.current_animation == "landing", "landing must remain active beyond the first grounded physics tick"):
+		return false
+	character_animation.advance(1.0)
+	if not _expect(not bool(player.get("landing_animation_active")), "landing completion signal must release the landing state"):
+		return false
+	player.call("_update_character_animation", Vector3.ZERO, true)
+	if not _expect(character_animation.current_animation == "idle", "normal idle selection must resume after landing completes"):
+		return false
 	var jump_start_height := player.global_position.y
 	var jump_center := TEST_VIEW_SIZE - Vector2(82.0, 92.0)
 	_send_touch(controls, 10, jump_center, true)
@@ -147,6 +176,8 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 	await physics_frame
 	var jumped := player.velocity.y > 0.1 and player.global_position.y > jump_start_height
 	if not _expect(jumped, "grounded jump input should produce upward velocity and displacement"):
+		return false
+	if not _expect(character_animation.current_animation == "jump", "Playable character must play its jump animation when airborne"):
 		return false
 
 	player.global_position = Vector3(0.0, 0.1, 3.0)
@@ -161,12 +192,21 @@ func _test_player_physics(player: CharacterBody3D, controls: Control) -> bool:
 		await physics_frame
 	if not _expect(player.is_on_floor(), "player should be grounded before camera-relative movement testing"):
 		return false
+	# The landing clip is intentionally non-looping and must finish before locomotion resumes.
+	for _frame in range(90):
+		if not bool(player.get("landing_animation_active")):
+			break
+		await physics_frame
+	if not _expect(not bool(player.get("landing_animation_active")), "landing animation must finish before locomotion testing"):
+		return false
 	var start_position := player.global_position
 	Input.action_press("move_forward")
 	for _frame in range(24):
 		await physics_frame
 	Input.action_release("move_forward")
 	var displacement := player.global_position - start_position
+	if not _expect(character_animation.current_animation == "run" or character_animation.current_animation == "walk", "Playable character must switch from idle to a locomotion animation while moving"):
+		return false
 	if not _expect(absf(displacement.x) > 0.25 and absf(displacement.x) > absf(displacement.z) * 2.0, "forward movement should follow the camera yaw rather than the initial body heading"):
 		return false
 	var expected_body_yaw := PI / 2.0
@@ -251,3 +291,12 @@ func _expect(condition: bool, message: String) -> bool:
 func _fail(message: String) -> void:
 	push_error("OWO TÀ gameplay test failed: " + message)
 	quit(1)
+
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node as AnimationPlayer
+	for child in node.get_children():
+		var found := _find_animation_player(child)
+		if found != null:
+			return found
+	return null

@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - feature/phase-003b-character-roster
+      - feature/phase-003c-integrated-character-roster
     paths:
       - ".github/workflows/blender-character-rebuild.yml"
       - "assets/characters/amara_okonkwo/**"
@@ -95,10 +96,10 @@ jobs:
                   "skeleton_joints": len(gltf.get("skins", [{}])[0].get("joints", [])),
                   "animation_clip_count": len(animations),
               })
-              budget_path.write_text(json.dumps(budget, indent=2) + "\n")
+              budget_path.write_text(json.dumps(budget, indent=2) + "\\n")
               report.append(f"{cid}: GLB={len(data)} bytes SHA256={measured['glb_sha256']} vertices={vertices} triangles={triangles} joints={measured['skeleton_joints']} clips={len(animations)} idle={idle_duration:.3f}s")
-          pathlib.Path("character-rebuild-report.txt").write_text("\n".join(report) + "\n")
-          print("\n".join(report))
+          pathlib.Path("character-rebuild-report.txt").write_text("\\n".join(report) + "\\n")
+          print("\\n".join(report))
           PY
 
       - name: Upload regenerated character sources and runtime assets
