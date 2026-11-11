@@ -1,6 +1,6 @@
 extends SceneTree
 
-const EXPECTED_BUILD_ID := "OWO TÀ · KEMI-CHECK-01"
+const EXPECTED_BUILD_ID := "OWO TÀ · IKEJA STREETSCAPE-02"
 const REQUIRED_CLIPS := ["idle", "walk", "run", "jump"]
 const MIN_CENTRAL_TEAL_PIXELS := 150
 const MIN_RENDERED_MESH_DIFF_PIXELS := 2000
